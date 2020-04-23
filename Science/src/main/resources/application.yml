@@ -9,7 +9,7 @@ spring:
 #    url: jdbc:mysql://localhost:3306/ttf?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
     url: jdbc:mysql://122.51.73.55:3306/onepoint?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&allowMultiQueries=true
     username: fnst
-    password: VjD1bw1t&w96RM#!3V
+    password: VjD1bw1t&w96RM#!
     test-while-idle: true
     test-on-borrow: true
     validation-query: SELECT 1 FROM DUAL
