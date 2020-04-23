@@ -1,0 +1,24 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * @author wuyu
+ *
+ */
+@Setter
+@Getter
+public class TypeOne {
+    private Integer id;
+    private String productName;
+    private String hoseId;
+    private String hoseOd;
+    private String wpPsi;
+    private String lowestTemperature;
+    private String highestTemperature;
+    private String medium;
+}

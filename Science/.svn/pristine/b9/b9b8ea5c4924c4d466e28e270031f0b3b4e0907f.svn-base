@@ -1,0 +1,34 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.SecondLevelDirectory;
+import com.fujitsu.ttf.yd.mapper.SecondLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.service.SecondLevelDirectoryService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class SecondLevelDirectoryServiceImpl implements SecondLevelDirectoryService {
+
+	/* (non-Javadoc)
+	 * @see com.fujitsu.ttf.yd.service.SecondLevelDirectoryService#getAllSecondDirectoryByFirstId(java.lang.Integer)
+	 */
+	
+	@Autowired
+	private SecondLevelDirectoryMapper secondLevelDirectoryMapper;
+	@Override
+	public List<SecondLevelDirectory> getAllSecondDirectoryByFirstId(Integer firstId) {
+		// TODO Auto-generated method stub
+		return secondLevelDirectoryMapper.getAllSecondDirectoryByFirstId(firstId);
+	}
+
+}

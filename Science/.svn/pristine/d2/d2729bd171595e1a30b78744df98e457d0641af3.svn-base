@@ -1,0 +1,107 @@
+package com.fujitsu.ttf.yd.entity;
+
+
+import java.util.Date;
+
+import javax.persistence.Id;
+import javax.persistence.Table;
+/**
+ * @Description 员工实体类
+ * @author 鲜攀
+ * @date: 2019年9月27日 下午3:57:14
+ */
+@Table(name="staff")
+public class Staff{
+	/** 员工ID;uuid生成 */
+    @Id
+    private String staffId ;
+    /** 登录账号 */
+    private String staffNumber ;
+    /** 员工姓名;员工姓名 */
+    private String staffName ;
+    /** 员工状态;0:已删除。1:使用中。 */
+    private String staffState ;
+    /** 创建时间 */
+    private Date createdTime ;
+    /** 修改时间 */
+    private Date updatedTime ;
+    /** 登陆密码 */
+    private String staffPassword ;
+    /** 角色ID;角色ID */
+    private Integer roleId ;
+    /** 部门ID;部门ID */
+    private Integer deptId ;
+
+    /** 员工ID;uuid生成 */
+    public String getStaffId(){
+        return this.staffId;
+    }
+    /** 员工ID;uuid生成 */
+    public void setStaffId(String staffId){
+        this.staffId = staffId;
+    }
+    /** 登录账号 */
+    public String getStaffNumber(){
+        return this.staffNumber;
+    }
+    /** 登录账号 */
+    public void setStaffNumber(String staffNumber){
+        this.staffNumber = staffNumber;
+    }
+    /** 员工姓名;员工姓名 */
+    public String getStaffName(){
+        return this.staffName;
+    }
+    /** 员工姓名;员工姓名 */
+    public void setStaffName(String staffName){
+        this.staffName = staffName;
+    }
+    /** 员工状态;0:已删除。1:使用中。 */
+    public String getStaffState(){
+        return this.staffState;
+    }
+    /** 员工状态;0:已删除。1:使用中。 */
+    public void setStaffState(String staffState){
+        this.staffState = staffState;
+    }
+    /** 创建时间 */
+    public Date getCreatedTime(){
+        return this.createdTime;
+    }
+    /** 创建时间 */
+    public void setCreatedTime(Date createdTime){
+        this.createdTime = createdTime;
+    }
+    /** 修改时间 */
+    public Date getUpdatedTime(){
+        return this.updatedTime;
+    }
+    /** 修改时间 */
+    public void setUpdatedTime(Date updatedTime){
+        this.updatedTime = updatedTime;
+    }
+    /** 登陆密码 */
+    public String getStaffPassword(){
+        return this.staffPassword;
+    }
+    /** 登陆密码 */
+    public void setStaffPassword(String staffPassword){
+        this.staffPassword = staffPassword;
+    }
+    /** 角色ID;角色ID */
+    public Integer getRoleId(){
+        return this.roleId;
+    }
+    /** 角色ID;角色ID */
+    public void setRoleId(Integer roleId){
+        this.roleId = roleId;
+    }
+    /** 部门ID;部门ID */
+    public Integer getDeptId(){
+        return this.deptId;
+    }
+    /** 部门ID;部门ID */
+    public void setDeptId(Integer deptId){
+        this.deptId = deptId;
+    }
+}

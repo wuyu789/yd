@@ -1,0 +1,30 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * @author wuyu
+ *
+ */
+@Setter
+@Getter
+public class Users {
+    private Integer id;
+    private String companyName;
+    private String contactPerson;
+    private String email;
+    private String handbookName;
+    private String openid;
+    private String nickname;
+    private String sex;
+    private String language;
+    private String city;
+    private String province;
+    private String country;
+    private String headimgurl;
+    private String unionid;
+}

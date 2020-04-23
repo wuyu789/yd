@@ -1,0 +1,46 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+    
+spring:
+  datasource:
+#    url: jdbc:mysql://localhost:3306/ttf?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    url: jdbc:mysql://122.51.73.55:3306/onepoint?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    username: fnst
+    password: VjD1bw1t&w96RM#!3V
+#    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      read-only: false
+      connection-timeout: 60000
+      idle-timeout: 60000
+      validation-timeout: 3000
+      max-lifetime: 60000
+      login-timeout: 5
+      maximum-pool-size: 200
+      minimum-idle: 10
+  
+  jackson:
+    time-zone: GMT+8
+        
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
+      
+mybatis:
+  type-aliases-package: com.fujitsu.ttf.crm.entity
+#  指定mapper 的配置文件位置
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  
+ 
+logging:
+ level:
+  com:
+   fujitsu:
+    ttf:
+     crm:
+      mapper: debug

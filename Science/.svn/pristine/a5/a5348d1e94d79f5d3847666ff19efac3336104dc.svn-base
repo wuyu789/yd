@@ -1,0 +1,33 @@
+package com.fujitsu.ttf.yd.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+
+/**
+ * @author wuyu
+ *
+ */
+@Mapper
+public interface ThirdLevelDirectoryMapper {
+	
+	 public List<ThirdLevelDirectory> getAllThirdLevelDirectoryBySecondId(@Param("secondId")Integer secondId);
+
+	 public List<ThirdLevelDirectory> getAllThirdLevelData(List<Integer> ids);
+	 
+	 public List<ThirdLevelDirectory> selectThirdLevelDirectoryByThirdName(@Param("thirdName")String thirdName);
+	 
+	 public ThirdLevelDirectory selectDataByThirdName(@Param("thirdName")String thirdName);
+	 
+	 public List<ThirdLevelDirectory> selectCollectDirectory(@Param("userId")Integer userId);
+	 
+	 public void insertCollect(@Param("userId")Integer userId,@Param("thirdId")Integer thirdId);
+	 
+	 public void deleteCollect(@Param("userId")Integer userId,@Param("thirdId")Integer thirdId);
+	 
+	 public void selectCollect(@Param("userId")Integer userId,@Param("thirdId")Integer thirdId);
+
+}

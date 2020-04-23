@@ -1,0 +1,40 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.SecondLevelDirectory;
+import com.fujitsu.ttf.yd.mapper.SecondLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.service.SecondLevelDirectoryService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class SecondLevelDirectoryServiceImpl implements SecondLevelDirectoryService {
+
+	@Autowired
+	private SecondLevelDirectoryMapper secondLevelDirectoryMapper;
+	
+	@Override
+	public List<SecondLevelDirectory> getAllSecondDirectoryByFirstId(Integer firstId) {
+		List<SecondLevelDirectory> list=secondLevelDirectoryMapper.getAllSecondDirectoryByFirstId(firstId);
+		List<SecondLevelDirectory> SecondLevelDirectoryList=new ArrayList<SecondLevelDirectory>();
+		for(int i=0;i<list.size();i++) {
+			SecondLevelDirectory directory=new SecondLevelDirectory();
+			directory.setId(list.get(i).getId());
+			directory.setFirstId(list.get(i).getFirstId());
+			directory.setSecondEnglishName(list.get(i).getSecondEnglishName());
+			directory.setSecondName(list.get(i).getSecondName());
+			directory.setSecondImg("/construction_machinery/"+list.get(i).getSecondImg());
+			SecondLevelDirectoryList.add(directory);
+		}
+		
+		return SecondLevelDirectoryList;
+	}
+
+}

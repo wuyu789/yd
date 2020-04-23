@@ -1,0 +1,54 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.SendRecord;
+import com.fujitsu.ttf.yd.mapper.SendRecordMapper;
+import com.fujitsu.ttf.yd.service.SendRecordService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class SendRecordServiceImpl implements SendRecordService {
+
+	@Autowired
+	private SendRecordMapper sendRecordMapper;
+	@Override
+	public void insertSendRecord(SendRecord sendRecord) {
+		 String sendNames = sendRecord.getSendName();
+		 String sendEmails = sendRecord.getSendEmail();
+		 String[] sendNamesList = sendNames.split(",");
+		 String[] sendEmailsList = sendEmails.split(",");
+		 System.out.println(sendEmailsList);
+		 for(int i=0;i<sendNamesList.length;i++) {
+			 for(int j=0;j<sendEmailsList.length;i++) {
+				 SendRecord record=new SendRecord();
+				 record.setSendName(sendNamesList[i]);
+				 record.setSendEmail(sendEmailsList[j]);
+				 record.setUserId(sendRecord.getUserId());
+				 Date date = new Date();
+				 SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    		 String format = sdf.format(date);
+	    		 record.setSendTime(Timestamp.valueOf(format));
+	    		 sendRecordMapper.insertSendRecord(record);
+			 }
+		 }
+
+	}
+	@Override
+	public List<SendRecord> selectSendRecordByUserId(Integer userId) {
+		return sendRecordMapper.selectSendRecordByUserId(userId);
+	}
+
+}

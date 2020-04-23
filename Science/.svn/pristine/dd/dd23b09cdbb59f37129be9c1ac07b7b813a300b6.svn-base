@@ -1,0 +1,13 @@
+package com.fujitsu.ttf.yd.utils;
+
+/**
+ * 常量定义
+ */
+public class Constants {
+
+    public static final String STAFF_NUMBER = "staffNumber";
+    
+    public static final String SUCCESS = "success";
+
+    public static final String FAIL = "fail";
+}

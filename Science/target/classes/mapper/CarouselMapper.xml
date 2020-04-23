@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.CarouselMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.Carousel">
+       <result property="id" column="id"/>
+       <result property="carouselName" column="carousel_name"/>
+       <result property="carouselUrl" column="carousel_url"/>
+     </resultMap>
+     
+     <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`carousel_name`,
+		`carousel_url`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`carousel`
+	</sql>
+     
+     <select id="getAllCarouselVo" resultMap="idmap">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+     </select>
+</mapper>

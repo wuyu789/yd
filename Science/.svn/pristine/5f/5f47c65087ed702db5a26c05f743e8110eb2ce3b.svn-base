@@ -1,0 +1,45 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.utils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author wuyu
+ *
+ */
+public class SendEmailUtils {
+	
+     public static void sendEmail(long pdfName,String targetAddress) {
+    	 
+    	String userName = "wuyu13276284262@163.com"; // 用户邮箱地址
+ 		String password = "wuyu194120"; // 密码或者授权码
+ 		//String targetAddress = null; // 接受者邮箱地址
+
+ 		// 设置邮件内容
+ 		MimeMessageDTO mimeDTO = new MimeMessageDTO();
+ 		mimeDTO.setSentDate(new Date());
+ 		mimeDTO.setSubject("wuyu");
+ 		mimeDTO.setText("hello rlp"
+ 				+ targetAddress);
+ 		
+ 	    // 发送单邮件(附件)
+		List<String> filepath=new ArrayList<String>();
+		//filepath.add("D:/vuejs.pdf");
+		filepath.add("E:/test/"+pdfName+".pdf");
+//		if (MailUtil.sendEmailByFile(userName, password, targetAddress, mimeDTO,filepath)) {
+//			System.out.println("邮件发送成功！");
+//		} else {
+//			System.out.println("邮件发送失败!!!");
+//		}
+		//targetAddress = "1308638159@qq.com,1466209469@qq.com";
+		if (MailUtil.sendGroupEmailByFile(userName, password, targetAddress, mimeDTO,filepath)) {
+			System.out.println("邮件发送成功！");
+		} else {
+			System.out.println("邮件发送失败!!!");
+		}
+     }
+}

@@ -1,0 +1,38 @@
+package com.fujitsu.ttf.yd.configuer;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.fujitsu.ttf.yd.utils.Constants;
+
+
+
+@Configuration
+public class RestConfigurer implements WebMvcConfigurer {
+
+
+	// 跨域
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins("*").allowedHeaders("*").allowCredentials(true).allowedMethods("GET",
+				"POST", "PUT", "DELETE");
+	}
+
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/carousel/**").addResourceLocations("file:" + Constants.CAROUAEL_PATH + "/");
+		registry.addResourceHandler("/news/**").addResourceLocations("file:" + Constants.NEWS_PATH + "/");
+//		registry.addResourceHandler("/phone/file/**").addResourceLocations("file:" + Constants.PHONE_FILE_PATH + "/");
+//		registry.addResourceHandler("/img/**").addResourceLocations("file:" + Constants.BASE_PATH + "/");
+//		registry.addResourceHandler("/callRecording/**").addResourceLocations("file:" + Constants.CALL_RECORDING_PATH + "/");
+//		registry.addResourceHandler("/img/goods/**").addResourceLocations("file:" + goodsImgPath + "/");
+//		registry.addResourceHandler("/img/merchant_cert/**").addResourceLocations("file:" + merchantCertImgPath + "/");
+//		registry.addResourceHandler("/img/user_cert/**").addResourceLocations("file:" + userCertImgPath + "/");
+//		registry.addResourceHandler("/img/app/**").addResourceLocations("file:" + packageUrl + "/");
+		// WebMvcConfigurer.super.addResourceHandlers(registry);
+	}
+
+}

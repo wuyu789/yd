@@ -1,0 +1,22 @@
+package com.fujitsu.ttf.yd.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+*@author shik.jy
+*@date 2019年10月21日
+*@Description
+*/
+@Setter
+@Getter
+public class ProductFeatures {
+
+	private int id;
+	
+	private String key;
+	
+	private String text;
+	
+	private int secondLevelId;
+}

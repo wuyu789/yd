@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service;
+
+import com.fujitsu.ttf.yd.entity.Users;
+
+/**
+ * @author wuyu
+ *
+ */
+public interface UsersService {
+	public void insertUsers(Users users);
+}

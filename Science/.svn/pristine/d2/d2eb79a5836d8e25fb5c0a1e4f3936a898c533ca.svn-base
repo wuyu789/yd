@@ -1,0 +1,6 @@
+package com.fujitsu.ttf.yd.service;
+
+public interface PDFService {
+	
+   public void PDFMerge(String[] split,String targetAddress);
+}

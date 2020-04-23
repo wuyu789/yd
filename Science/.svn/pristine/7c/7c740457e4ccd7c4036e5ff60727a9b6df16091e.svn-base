@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service;
+
+import java.util.Map;
+
+/**
+ * @author wuyu
+ *
+ */
+public interface ThirdLevelDirectoryService {
+	 public Map<String,Object> getAllThirdLevelDirectoryBySecondId(Integer secondId,Integer page,Integer pageSize);
+	
+	 public Map<String, Object> selectThirdLevelDirectoryByThirdName(String thirdName,Integer page,Integer pageSize);
+}

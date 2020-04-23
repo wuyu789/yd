@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.UsersMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.Users">
+        <result property="companyName" column="company_name"/>
+        <result property="contactPerson" column="contact_person"/>
+        <result property="email" column="email"/>
+        <result property="handbookName" column="handbook_name"/>
+     </resultMap>
+ 	
+	<!-- <insert id="insertUsers" parameterType="com.fujitsu.ttf.yd.entity.Users">
+	   insert into users(company_name,contact_person,eamil,handbook_name,user_id) values (#{companyName},#{contactPerson},#{eamil},#{handbookName},#{userId})
+	</insert> -->
+	<insert id="insertUsers" parameterType="com.fujitsu.ttf.yd.entity.Users">
+	   insert into users(openid,nickname,sex,language,city,province,country,headimgurl,unionid) values (#{openid},#{nickname},#{sex},#{language},#{city},#{province},#{country},#{headimgurl},#{unionid})
+	</insert>
+	 <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`openid`,
+		`nickname`,
+		`sex`,
+		`language`,
+		`city`,
+		`province`,
+		`country`,
+		`headimgurl`,
+		`unionid`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`users`
+	</sql>
+	
+	<select id="findUsersByOpenid" resultMap="idmap" parameterType="string">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where openid=#{openid}
+    </select>
+    
+    <update id="UpdateUsers" parameterType="com.fujitsu.ttf.yd.entity.Users">
+       update users 
+       <set>
+  			<if test="nickname!=null and nickname!=''">
+  				nickname=#{nickname},
+  			</if>
+  			<if test="sex!=null and sex!=''">
+  				sex=#{sex},
+  			</if>
+  			<if test="language!=null and language!=''">
+  				language=#{language},
+  			</if>
+  			<if test="city!=null and city!=''">
+  				city=#{city},
+  			</if>
+  			<if test="province!=null and province!=''">
+  				province=#{province},
+  			</if>
+  			<if test="country!=null and country!=''">
+  				country=#{country},
+  			</if>
+  			<if test="headimgurl!=null and headimgurl!=''">
+  				headimgurl=#{headimgurl},
+  			</if>
+  			<if test="unionid!=null and unionid!=''">
+  				unionid=#{unionid},
+  			</if>
+  			<if test="companyName!=null and companyName!=''">
+  				company_name=#{companyName},
+  			</if>
+  			<if test="contactPerson!=null and contactPerson!=''">
+  				contact_person=#{contactPerson},
+  			</if>
+  			<if test="email!=null and email!=''">
+  				email=#{email},
+  			</if>
+  			<if test="handbookName!=null and handbookName!=''">
+  				handbook_name=#{handbookName},
+  			</if>
+  			update_time=now()
+  		</set>
+       where openid=#{openid}
+    </update>
+    
+    
+    <select id="findAllUsers" resultMap="idmap">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+    </select>
+    
+</mapper>

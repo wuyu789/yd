@@ -1,0 +1,20 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.fujitsu.ttf.yd.entity.Users;
+
+/**
+ * @author wuyu
+ *
+ */
+public interface UsersService {
+	public void insertUsers(Users users);
+	
+	public Users findUsersByUserId(String userId);
+	
+	public void UpdateUsers(Users users);
+}

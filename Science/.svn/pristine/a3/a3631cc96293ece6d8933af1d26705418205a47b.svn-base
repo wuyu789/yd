@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.fujitsu.ttf.yd.entity.Users;
+
+/**
+ * @author wuyu
+ *
+ */
+@Mapper
+public interface UsersMapper {
+    public void insertUsers(Users users);
+}

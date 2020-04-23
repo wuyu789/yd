@@ -1,0 +1,44 @@
+package com.fujitsu.ttf.yd.service;
+
+import java.util.Map;
+
+import com.fujitsu.ttf.yd.entity.ResultEntity;
+import com.fujitsu.ttf.yd.vo.management.StaffVo;
+
+/**
+* @ClassName: IStaffService 
+* @Description: 员工Service 接口 
+* @author shik.jy
+* @date 2019年10月11日 下午5:56:43 
+*
+ */
+public interface IStaffService {
+
+	/**
+	 * 添加员工
+	 * @param staffVo
+	 * @return 成功/失败
+	 */
+	ResultEntity<?> addStaff(StaffVo staffVo);
+	
+	/**
+	 * 删除员工
+	 * @param staffVo
+	 * @return 成功/失败
+	 */
+	ResultEntity<?> deleteStaff(StaffVo staffVo);
+	
+	/**
+	 * 修改员工
+	 * @param staffVo
+	 * @return 成功/失败
+	 */
+	ResultEntity<?> updateStaff(StaffVo staffVo);
+	
+	/**
+	 * 获取所有员工信息
+	 * @return 带分页信息的Map
+	 */
+	Map<String,Object> getStaff(StaffVo staffVo);
+	
+}

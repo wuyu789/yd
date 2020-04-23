@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.UsersMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.Users">
+       <result property="id" column="id"/>
+       <result property="companyName" column="company_name"/>
+       <result property="contactPerson" column="contact_person"/>
+       <result property="eamil" column="eamil"/>
+       <result property="handbookName" column="handbook_name"/>
+     </resultMap>
+ 	
+	<insert id="insertUsers" parameterType="com.fujitsu.ttf.yd.entity.Users">
+	   insert into users(company_name,contact_person,eamil,handbook_name) values (#{companyName},#{contactPerson},#{eamil},#{handbookName})
+	</insert>
+</mapper>

@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service;
+
+/**
+ * @author wuyu
+ *
+ */
+public interface ThirdLevelDirectoryService {
+	  Object getAllThirdLevelDirectoryBySecondId(Integer secondId,Integer page,Integer pageSize);
+	
+	  Object selectThirdLevelDirectoryByThirdName(String thirdName,Integer page,Integer pageSize);
+}

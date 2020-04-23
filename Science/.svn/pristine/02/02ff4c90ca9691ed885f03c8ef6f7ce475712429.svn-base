@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fujitsu.ttf.yd.mapper.ParameterMapper">
+	<!-- 表字段映射 -->
+	<resultMap id="resultMap" type="com.fujitsu.ttf.yd.entity.Parameter">
+		<id property="id" column="id"/>
+		<result property="value" column="value"/>
+		<result property="productFeaturesId" column="product_features_id"/>
+	</resultMap>
+	
+	<!-- 根据员工id查询员工   -->
+	<select id="getAllParameter" resultMap="resultMap">
+		<!-- 查询的sql语句 -->
+		select * from parameter
+	</select>
+    
+    
+</mapper>

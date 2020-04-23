@@ -1,0 +1,73 @@
+package com.fujitsu.ttf.yd.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.service.PDFService;
+import com.fujitsu.ttf.yd.service.ThirdLevelDirectoryService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+/**
+ * @author wuyu
+ *
+ */
+@Api(value = "合并pdf并且发送", tags = "合并pdf并且发送")
+@Controller
+@RequestMapping("pDFMergeController")
+public class PDFMergeController {
+     
+	@Autowired
+	private PDFService pdfService;
+	
+	@Autowired
+	private ThirdLevelDirectoryService thirdLevelDirectoryService;
+	
+	@PostMapping("mergerPdf")
+	@ApiOperation(value = "合并pdf并且发送", notes = "")
+	@ResponseBody
+	public void mergerPdf(String thirdNames,String targetAddress,@RequestBody Map<String, Object> data,int id) {
+		//生成pdf封面
+		pdfService.addMerge(data, "D:\\cover.pdf",id);
+		String[] split = thirdNames.split(",");
+		//存放pdf
+		List<String> list=new ArrayList<String>();
+
+		for(String thirdName:split) {
+			ThirdLevelDirectory directory = thirdLevelDirectoryService.selectDataByThirdName(thirdName);
+			if(directory.getSecondId()==1) {
+				list.add("/construction_machinery/industrial_rubber_hose/"+directory.getPdfName());
+			}else if(directory.getSecondId()==2){
+				list.add("/construction_machinery/hydraulic_hose/"+directory.getPdfName());
+			}
+		}
+		// 去重
+		for  ( int  i  =   0 ; i  <  list.size()  -   1 ; i ++ )  {       
+		      for  ( int  j  =  list.size()  -   1 ; j  >  i; j -- )  {       
+		           if  (list.get(j).equals(list.get(i)))  {       
+		              list.remove(j);       
+		            }        
+		        }        
+		      }  
+		System.err.println(list);
+		pdfService.PDFMerge(list,targetAddress);
+	}
+	
+//	@PostMapping("addPdf")
+//	@ApiOperation(value = "生成pdf", notes = "")
+//	@ResponseBody
+////	public void mergerPdf(Map<String, Object> data,String fileOutPath) {
+////		pdfService.addMerge(data, fileOutPath);
+////	}
+	
+}

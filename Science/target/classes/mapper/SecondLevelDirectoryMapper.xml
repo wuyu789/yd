@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.SecondLevelDirectoryMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.SecondLevelDirectory">
+       <result property="id" column="id"/>
+       <result property="secondName" column="second_name"/>
+       <result property="secondEnglishName" column="second_english_name"/>
+       <result property="firstId" column="first_id"/>
+       <result property="secondImg" column="second_img"/>
+     </resultMap>
+     
+     <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`second_name`,
+		`second_english_name`,
+		`first_id`,
+		`second_img`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`second_level_directory`
+	</sql>
+	
+	<select id="getAllSecondDirectoryByFirstId" resultMap="idmap" parameterType="Integer">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where first_id=#{firstId}
+     </select>
+</mapper>

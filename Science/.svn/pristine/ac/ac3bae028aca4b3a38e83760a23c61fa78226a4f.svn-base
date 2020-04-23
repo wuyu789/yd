@@ -1,0 +1,34 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.Carousel;
+import com.fujitsu.ttf.yd.mapper.CarouselMapper;
+import com.fujitsu.ttf.yd.service.CarouselService;
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class CarouselServiceImpl implements CarouselService {
+    
+	
+	@Autowired
+	private CarouselMapper carouselMapper;
+	
+	/* (non-Javadoc)
+	 * @see com.fujitsu.yd.service.CarouselService#getAllCarouselVo()
+	 */
+	@Override
+	public List<Carousel> getAllCarouselVo() {
+		// TODO Auto-generated method stub
+		return carouselMapper.getAllCarouselVo();
+	}
+
+}

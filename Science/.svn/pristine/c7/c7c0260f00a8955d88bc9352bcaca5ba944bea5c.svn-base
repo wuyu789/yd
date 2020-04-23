@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.ThirdLevelDirectoryMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.ThirdLevelDirectory">
+       <result property="id" column="id"/>
+       <result property="secondId" column="second_id"/>
+       <result property="thirdName" column="third_name"/>
+       <result property="title" column="title"/>
+       <result property="describe" column="describe"/>
+       <result property="thirdImg" column="third_img"/>
+       <result property="typeId" column="type_id"/>
+       <result property="pdfName" column="pdf_name"/>
+       <result property="pdfImg" column="pdf_img"/>
+       <result property="collectCount" column="collect_count"/>
+     </resultMap>
+     
+     <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`second_id`,
+		`third_name`,
+		`title`,
+		`describe`,
+		`third_img`,
+		`type_id`,
+		`pdf_name`,
+		`pdf_img`,
+		`collect_count`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`third_level_directory`
+	</sql>
+	
+	<select id="getAllThirdLevelDirectoryBySecondId" resultMap="idmap" parameterType="Integer">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where second_id=#{secondId}
+     </select>
+     
+     <!-- 查询的条件,非空判断 -->
+  	<sql id="condition">
+  		<where>
+  		    <if test="thirdName!=null and thirdName!=''">
+  				and `title` like concat('%',#{thirdName},'%') 
+  			</if>
+  		</where>
+  	</sql>
+  	
+     <select id="selectThirdLevelDirectoryByThirdName" resultMap="idmap" parameterType="String">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         <include refid="condition"></include>
+     </select>
+     
+     <select id="getAllThirdLevelData" resultMap="idmap">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where type_id in
+         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+             #{item}
+        </foreach>
+     </select>
+     
+     <select id="selectDataByThirdName" resultType="com.fujitsu.ttf.yd.entity.ThirdLevelDirectory" parameterType="String">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where third_name=#{thirdName}
+     </select>
+     
+     <select id="selectCollectDirectory" resultMap="idmap" parameterType="string">
+         select tld.*
+         from collect c left join users u on u.openid=c.user_id
+         left join third_level_directory tld on tld.id=c.third_id
+         where c.user_id=#{openid}
+     </select>
+     
+     <insert id="insertCollect" parameterType="map">
+         insert into collect(user_id,third_id) values (#{openid},#{thirdId})
+     </insert>
+     
+     <delete id="deleteCollect" parameterType="map">
+         delete from collect where user_id=#{openid} and third_id=#{thirdId}
+     </delete>
+     
+     <select id="selectThirdLevelDirectoryById" parameterType="Integer" resultType="com.fujitsu.ttf.yd.entity.ThirdLevelDirectory">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where id=#{thirdId}
+     </select>
+     
+     <update id="updateData" parameterType="map">
+        update <include refid="table"/>
+        set collect_count=#{collectCount}
+        where id=#{thirdId}
+     </update>
+     
+     <select id="getDataType1" parameterType="string" resultMap="idmap">
+        SELECT tld.*
+        FROM third_level_directory tld LEFT JOIN type_1 t1 on tld.second_id=t1.second_id
+        <where>
+          <if test="productName!=null and productName!=''">
+              t1.product_name like concat('%',#{productName},'%') 
+          </if>
+        </where>
+     </select>
+     
+     <select id="getDataType2" parameterType="string" resultMap="idmap">
+        SELECT tld.*
+        FROM third_level_directory tld LEFT JOIN type_2 t2 on tld.second_id=t2.second_id
+        <where>
+          <if test="productName!=null and productName!=''">
+               t2.product_name like concat('%',#{productName},'%') 
+          </if>
+        </where>
+     </select>
+</mapper>

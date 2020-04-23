@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.CollectMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.Collect">
+       <result property="id" column="id"/>
+       <result property="userId" column="user_id"/>
+       <result property="thirdId" column="third_id"/>
+     </resultMap>
+     
+     <select id="selectCollect" resultMap="idmap" parameterType="map">
+       select * from collect where user_id=#{userId} and third_id=#{thirdId}
+     </select>
+     
+</mapper>

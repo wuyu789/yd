@@ -1,0 +1,103 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.mapper.ThirdLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.service.ThirdLevelDirectoryService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class ThirdLevelDirectoryServiceImpl implements ThirdLevelDirectoryService {
+
+	@Autowired
+	private ThirdLevelDirectoryMapper thirdLevelDirectoryMapper;
+
+	@Override
+	public Map<String,Object> getAllThirdLevelDirectoryBySecondId(Integer secondId,Integer page,Integer pageSize) {
+		PageHelper.startPage(page, pageSize);
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.getAllThirdLevelDirectoryBySecondId(secondId);
+		System.err.println(list);
+		System.err.println(list.size());
+		List<ThirdLevelDirectory> thirdLevelDirectoryList = new ArrayList<ThirdLevelDirectory>();
+		for (int i = 0; i < list.size(); i++) {
+			ThirdLevelDirectory directory = new ThirdLevelDirectory();
+			int id = list.get(i).getId();
+			directory.setId(id);
+			directory.setSecondId(list.get(i).getSecondId());
+			directory.setThirdName(list.get(i).getThirdName());
+			directory.setDescribe(list.get(i).getDescribe());
+			directory.setTypeId(list.get(i).getTypeId());
+			// 1: 工业胶管 2：液压胶管 3： 乘员舱 4: 车身 5: 转向架 6: 动力总成 7: 驾驶员工作区
+			if (id == 1) {
+				directory.setPdfName("/construction_machinery/industrial_rubber_hose/" + list.get(i).getPdfName());
+			} else if (id == 2) {
+				directory.setPdfName("/construction_machinery/hydraulic_hose/" + list.get(i).getPdfName());
+			}
+			directory.setThirdImg("/construction_machinery/hose_img/" + list.get(i).getThirdImg());
+			thirdLevelDirectoryList.add(directory);
+		}
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(thirdLevelDirectoryList);
+		// 组织返回的map
+	    Map<String, Object> resultMap = new HashMap<String, Object>();
+	    resultMap.put("data",entityPage.getList());
+	    resultMap.put("total", thirdLevelDirectoryMapper.getAllThirdLevelDirectoryBySecondId(secondId).size());
+	    int totalCount=(thirdLevelDirectoryMapper.getAllThirdLevelDirectoryBySecondId(secondId).size()/pageSize)+1;
+	    if(page<=totalCount) {
+	       resultMap.put("page",page);
+	    }else {
+	       resultMap.put("page",totalCount);
+	    }
+	    resultMap.put("pageSize", pageSize);
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> selectThirdLevelDirectoryByThirdName(String thirdName,Integer page,Integer pageSize) {
+		PageHelper.startPage(page, pageSize);
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.selectThirdLevelDirectoryByThirdName(thirdName);
+		List<ThirdLevelDirectory> thirdLevelDirectoryList = new ArrayList<ThirdLevelDirectory>();
+		for (int i = 0; i < list.size(); i++) {
+			ThirdLevelDirectory directory = new ThirdLevelDirectory();
+			int id = list.get(i).getId();
+			directory.setId(id);
+			directory.setSecondId(list.get(i).getSecondId());
+			directory.setThirdName(list.get(i).getThirdName());
+			directory.setDescribe(list.get(i).getDescribe());
+			directory.setTypeId(list.get(i).getTypeId());
+			// 1: 工业胶管 2：液压胶管 3： 乘员舱 4: 车身 5: 转向架 6: 动力总成 7: 驾驶员工作区
+			if (id == 1) {
+				directory.setPdfName("/construction_machinery/industrial_rubber_hose/" + list.get(i).getPdfName());
+			} else if (id == 2) {
+				directory.setPdfName("/construction_machinery/hydraulic_hose/" + list.get(i).getPdfName());
+			}
+			directory.setThirdImg("/construction_machinery/hose_img/" + list.get(i).getThirdImg());
+			thirdLevelDirectoryList.add(directory);
+		}
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(thirdLevelDirectoryList);
+		// 组织返回的map
+	    Map<String, Object> resultMap = new HashMap<String, Object>();
+	    resultMap.put("data",entityPage.getList());
+	    resultMap.put("total", thirdLevelDirectoryMapper.selectThirdLevelDirectoryByThirdName(thirdName).size());
+	    int totalCount=(thirdLevelDirectoryMapper.selectThirdLevelDirectoryByThirdName(thirdName).size()/pageSize)+1;
+	    if(page<=totalCount) {
+	       resultMap.put("page",page);
+	    }else {
+	       resultMap.put("page",totalCount);
+	    }
+	    resultMap.put("pageSize", pageSize);
+		return resultMap;
+	}
+
+}

@@ -1,0 +1,192 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.ResultEntity;
+import com.fujitsu.ttf.yd.entity.Staff;
+import com.fujitsu.ttf.yd.enums.ResultEnum;
+import com.fujitsu.ttf.yd.mapper.StaffMapper;
+import com.fujitsu.ttf.yd.service.IStaffService;
+import com.fujitsu.ttf.yd.utils.Md5Util;
+import com.fujitsu.ttf.yd.utils.ResultUtils;
+import com.fujitsu.ttf.yd.vo.management.StaffVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mysql.cj.util.StringUtils;
+
+/**
+ * @ClassName: StaffServiceImpl
+ * @Description: 员工Service 实现类
+ * @author shik.jy
+ * @date 2019年10月11日 下午5:55:11
+ *
+ */
+@Service
+public class StaffServiceImpl implements IStaffService {
+
+	@Autowired
+	private StaffMapper staffMapper;
+
+	public ResultEntity<?> addStaff(StaffVo staffVo) {
+		
+		ResultEntity<Object> obj = checkStaffVo(staffVo);
+		if(null!=obj) {
+			return obj;
+		}
+		// 初始化员工密码 000000
+		String password = "000000";
+		// 对密码进行加密
+		String encryptPassword = Md5Util.encryptPassword(password, staffVo.getStaffNumber());
+		// 组织入库的数据
+		Staff staff = new Staff();
+		staff.setStaffId(UUID.randomUUID().toString());
+		staff.setStaffNumber(staffVo.getStaffNumber());
+		staff.setStaffName(staffVo.getStaffName());
+		staff.setStaffState(staffVo.getStaffState());
+		staff.setCreatedTime(new Date());
+		staff.setUpdatedTime(new Date());
+		staff.setStaffPassword(encryptPassword);
+		staff.setRoleId(staffVo.getRoleId());
+		staff.setDeptId(staffVo.getDeptId());
+		int result = staffMapper.insertStaff(staff);
+		if(result==1) {
+			return ResultUtils.success();
+		}
+		return ResultUtils.error(ResultEnum.INSERT_ERROR.getCode(), ResultEnum.INSERT_ERROR.getMsg());
+	}
+
+	public ResultEntity<?> deleteStaff(StaffVo staffVo) {
+		Staff staff = getStaffById(staffVo.getStaffId());
+		// 删除将员工状态置为0
+		staff.setStaffState("0");
+		staff.setUpdatedTime(new Date());
+		int result = staffMapper.deleteStaffById(staff);
+		if(result==1) {
+			return ResultUtils.success();
+		}
+		return ResultUtils.error(ResultEnum.DELETE_ERROR.getCode(), ResultEnum.DELETE_ERROR.getMsg());
+	}
+
+	public ResultEntity<?> updateStaff(StaffVo staffVo) {
+		ResultEntity<Object> obj = checkStaffVo(staffVo);
+		if(null!=obj) {
+			return obj;
+		}
+		Staff staff = getStaffById(staffVo.getStaffId());// 先拿到数据库存在的数据
+		// 再将需要修改的数据设置到staff 中 然后保存到数据库
+		staff.setUpdatedTime(new Date());
+		int result = staffMapper.updateStaff(compareStaff(staffVo,staff));
+		if(result==1) {
+			return ResultUtils.success();
+		}
+		return ResultUtils.error(ResultEnum.UPDATE_ERROR.getCode(), ResultEnum.UPDATE_ERROR.getMsg());
+	}
+
+	public Map<String, Object> getStaff(StaffVo staffVo) {
+		PageHelper.startPage(staffVo.getPage(), staffVo.getSize());
+		List<Staff> staffList=staffMapper.getStaff(staffVo);
+		PageInfo<Staff> entityPage = new PageInfo<Staff>(staffList);
+		// 组织返回的map
+	 	Map<String, Object> resultMap = new HashMap<String, Object>();
+	 	resultMap.put("totalCount", entityPage.getTotal());
+	 	resultMap.put("data",entityPage.getList());
+		return resultMap;
+	}
+
+	/**
+	 * @Description 员工输入校验
+	 * @param staffVo
+	 * @return
+	 */
+	private ResultEntity<Object> checkStaffVo(StaffVo staffVo) {
+
+		// 校验员工账号是否为空
+		if (null == staffVo.getStaffNumber()) {
+			return ResultUtils.error(ResultEnum.STAFF_NUMBER_NOT_EXIST.getCode(),
+					ResultEnum.STAFF_NUMBER_NOT_EXIST.getMsg());
+		}
+		// 校验员工账号是否为空
+		if (null == staffVo.getStaffName()) {
+			return ResultUtils.error(ResultEnum.STAFF_NAME_IS_NULL.getCode(), ResultEnum.STAFF_NAME_IS_NULL.getMsg());
+		}
+		// 校验员工账号格式是否合法
+		String regex = "[a-zA-Z0-9\\u4e00-\\u9fa5\\·]{1,10}";
+		if (!staffVo.getStaffName().matches(regex)) {
+			return ResultUtils.error(ResultEnum.STAFF_NAME_NOT_LEGAL.getCode(),
+					ResultEnum.STAFF_NAME_NOT_LEGAL.getMsg());
+		}
+		// 校验员工状态是否为空
+		if (null == staffVo.getStaffState()) {
+			return ResultUtils.error(ResultEnum.STAFF_STATE_IS_NULL.getCode(), ResultEnum.STAFF_STATE_IS_NULL.getMsg());
+		}
+		// 校验角色id是否为空
+		if (null == staffVo.getRoleId()) {
+			return ResultUtils.error(ResultEnum.STAFF_ROLEID_IS_NULL.getCode(),
+					ResultEnum.STAFF_ROLEID_IS_NULL.getMsg());
+		}
+		// 校验部门id是否为空
+		if (null == staffVo.getDeptId()) {
+			return ResultUtils.error(ResultEnum.STAFF_DEPTID_IS_NULL.getCode(),
+					ResultEnum.STAFF_DEPTID_IS_NULL.getMsg());
+		}
+		// 验证员工工号是否存在
+		Staff staff = staffMapper.getStaffByStaffNumber(staffVo.getStaffNumber());
+		if (staff != null) {
+			return ResultUtils.error(ResultEnum.STAFF_NUMBER_HAS_BEEN_EXIST.getCode(),
+					ResultEnum.STAFF_NUMBER_HAS_BEEN_EXIST.getMsg());
+		}
+		return null;
+	}
+	
+	/**
+	 * @Description 通过员工id 获取员工信息
+	 * @param staffId 员工id
+	 * @return 员工信息
+	 */
+	private Staff getStaffById(String staffId) {
+		if (null == staffId) {
+			ResultUtils.error(ResultEnum.STAFF_NUMBER_HAS_BEEN_EXIST.getCode(),
+					ResultEnum.STAFF_NUMBER_HAS_BEEN_EXIST.getMsg());
+		}
+		Staff delStaff = staffMapper.getStaffById(staffId);
+		if (null==delStaff) {
+			ResultUtils.error(ResultEnum.STAFF_IS_NULL.getCode(),
+					ResultEnum.STAFF_IS_NULL.getMsg());
+		}
+		return delStaff;
+	}
+	
+	/**
+	 * @Description 比较修改数据和数据库原本的数据
+	 * @param staffvo
+	 * @param staff
+	 * @return
+	 */
+	private Staff compareStaff(StaffVo staffvo,Staff staff) {
+		//	1，账号2，密码3，真实姓名	4，角色5，部门
+		String password = Md5Util.encryptPassword(staffvo.getStaffPassword(), staffvo.getStaffNumber());
+		if(!StringUtils.isNullOrEmpty(staffvo.getStaffNumber())&&!staffvo.getStaffNumber().equals(staff.getStaffNumber())) {
+			staff.setStaffNumber(staffvo.getStaffNumber());
+		}
+		if(!StringUtils.isNullOrEmpty(password)&&!password.equals(staff.getStaffPassword())){
+			staff.setStaffPassword(password);
+		}
+		if(!StringUtils.isNullOrEmpty(staffvo.getStaffName())&&!staffvo.getStaffName().equals(staff.getStaffName())) {
+			staff.setStaffName(staffvo.getStaffName());
+		}
+		if(staffvo.getRoleId()!=staff.getDeptId()) {
+			staff.setDeptId(staffvo.getRoleId());
+		}
+		if(staffvo.getRoleId()!=staff.getRoleId()) {
+			staff.setRoleId(staffvo.getRoleId());
+		}
+		return staff;
+	}
+}

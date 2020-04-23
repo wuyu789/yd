@@ -1,0 +1,21 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.fujitsu.ttf.yd.entity.TypeOne;
+
+/**
+ * @author wuyu
+ *
+ */
+@Mapper
+public interface TypeOneMapper {
+	
+	public TypeOne selectTypeOneById(@Param("id")Integer id);
+	
+	public TypeOne getAllType(@Param("key")String key,@Param("value")String value);
+}

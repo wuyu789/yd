@@ -1,0 +1,49 @@
+package com.fujitsu.ttf.yd.configuer;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.fujitsu.ttf.yd.utils.Constants;
+
+
+
+@Configuration
+public class RestConfigurer implements WebMvcConfigurer {
+
+
+	// 跨域
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins("*").allowedHeaders("*").allowCredentials(true).allowedMethods("GET",
+				"POST", "PUT", "DELETE");
+	}
+
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/carousel/**").addResourceLocations("file:" + Constants.CAROUSEL_PATH + "/");
+		registry.addResourceHandler("/cover/**").addResourceLocations("file:" + Constants.COVER_PATH + "/");
+		registry.addResourceHandler("/news/**").addResourceLocations("file:" + Constants.NEWS_PATH + "/");
+		registry.addResourceHandler("/construction_machinery/**").addResourceLocations("file:" + Constants.MACHINERY_PATH + "/");
+		registry.addResourceHandler("/construction_machinery/industrial_rubber_hose/**").addResourceLocations("file:" + Constants.INDUSTRIAL_RUBBER_HOSE_PATH + "/");
+		registry.addResourceHandler("/construction_machinery/hydraulic_hose/**").addResourceLocations("file:" + Constants.HYDRAULIC_HOSE_PATH + "/");
+		registry.addResourceHandler("/construction_machinery/hose_img/**").addResourceLocations("file:" + Constants.HOSE_IMG_PATH + "/");
+		registry.addResourceHandler("/rail_transit/**").addResourceLocations("file:" + Constants.RAIL_TRANSIT_PATH + "/");
+		registry.addResourceHandler("/rail_transit/pdf/**").addResourceLocations("file:" + Constants.RAIL_TRANSIT_PDF_PATH + "/");
+		registry.addResourceHandler("/rail_transit/img/**").addResourceLocations("file:" + Constants.RAIL_TRANSIT_IMG_PATH + "/");
+		registry.addResourceHandler("/static/js/**").addResourceLocations("classpath:/static/js/");
+		registry.addResourceHandler("/static/img/**").addResourceLocations("classpath:/static/img/");
+		registry.addResourceHandler("/static/css/**").addResourceLocations("classpath:/static/css/");
+//		registry.addResourceHandler("/phone/file/**").addResourceLocations("file:" + Constants.PHONE_FILE_PATH + "/");
+//		registry.addResourceHandler("/img/**").addResourceLocations("file:" + Constants.BASE_PATH + "/");
+//		registry.addResourceHandler("/callRecording/**").addResourceLocations("file:" + Constants.CALL_RECORDING_PATH + "/");
+//		registry.addResourceHandler("/img/goods/**").addResourceLocations("file:" + goodsImgPath + "/");
+//		registry.addResourceHandler("/img/merchant_cert/**").addResourceLocations("file:" + merchantCertImgPath + "/");
+//		registry.addResourceHandler("/img/user_cert/**").addResourceLocations("file:" + userCertImgPath + "/");
+//		registry.addResourceHandler("/img/app/**").addResourceLocations("file:" + packageUrl + "/");
+		// WebMvcConfigurer.super.addResourceHandlers(registry);
+	}
+
+}

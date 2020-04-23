@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.TypeOneMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.TypeOne">
+       <result property="id" column="id"/>
+       <result property="productName" column="product_name"/>
+       <result property="hoseId" column="hose_id"/>
+       <result property="hoseOd" column="hose_od"/>
+       <result property="wpPsi" column="wp_psi"/>
+       <result property="lowestTemperature" column="lowest_temperature"/>
+       <result property="highestTemperature" column="highest_temperature"/>
+       <result property="medium" column="medium"/>
+     </resultMap>
+     
+     <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`product_name`,
+		`hose_id`,
+		`hose_od`,
+		`wp_psi`,
+		`lowest_temperature`,
+		`highest_temperature`,
+		`medium`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`type_1`
+	</sql>
+	
+	<select id="selectTypeOneById" resultMap="idmap" parameterType="Integer">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where id=#{id}
+     </select>
+     
+     <select id="getAllType" resultMap="idmap" parameterType="java.lang.String">
+		<!-- 查询的sql语句 -->
+		select * from type_1 
+		<where>
+			<if test="key.indexOf('hose_id')==0">
+			 	and hose_id = #{value}	
+			</if>
+			<if test="key.indexOf('hose_od')==0">
+			 	and hose_od = #{value}	
+			</if>
+			<if test="key.indexOf('wp_psi')==0">
+			 	and wp_psi = #{value}	
+			</if>
+			<if test="key.indexOf('lowest_temperature')==0">
+			 	and lowest_temperature = #{value}	
+			</if>
+			<if test="key.indexOf('highest_temperature')==0">
+			 	and highest_temperature = #{value}	
+			</if>
+		</where>
+	</select>
+     
+</mapper>

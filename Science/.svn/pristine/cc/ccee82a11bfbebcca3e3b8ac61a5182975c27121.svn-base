@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fujitsu.ttf.yd.mapper.ProductFeaturesMapper">
+	<!-- 表字段映射 -->
+	<resultMap id="resultMap" type="com.fujitsu.ttf.yd.entity.ProductFeatures">
+		<id property="id" column="id"/>
+		<result property="featuresName" column="features_name"/>
+		<result property="thirdLevelId" column="third_level_id"/>
+	</resultMap>
+	
+	<!-- 根据员工id查询员工   -->
+	<select id="getAllProductFeatures" resultMap="resultMap" parameterType="java.lang.Integer">
+		<!-- 查询的sql语句 -->
+		select * from product_features where third_level_id = #{0}
+	</select>
+    
+</mapper>

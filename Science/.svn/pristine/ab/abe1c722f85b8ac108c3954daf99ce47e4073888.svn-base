@@ -1,0 +1,33 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.service.ThirdLevelDirectoryService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Controller
+@RequestMapping("thirdLevel")
+public class ThirdLevelDirectoryController {
+	 
+	 @Autowired
+	 private ThirdLevelDirectoryService thirdLevelDirectoryService;
+	
+	 @PostMapping("getAllThirdLevelDirectoryBySecondId")
+	 @ResponseBody
+     public List<ThirdLevelDirectory> getAllThirdLevelDirectoryBySecondId(Integer secondId){
+    	 return thirdLevelDirectoryService.getAllThirdLevelDirectoryBySecondId(secondId);
+     }
+}

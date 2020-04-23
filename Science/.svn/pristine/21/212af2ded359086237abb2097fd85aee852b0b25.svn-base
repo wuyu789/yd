@@ -1,0 +1,33 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.mapper.ThirdLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.service.ThirdLevelDirectoryService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class ThirdLevelDirectoryServiceImpl implements ThirdLevelDirectoryService {
+    
+	/* (non-Javadoc)
+	 * @see com.fujitsu.ttf.yd.service.ThirdLevelDirectoryService#getAllThirdLevelDirectoryBySecondId(java.lang.Integer)
+	 */
+	@Autowired
+	private ThirdLevelDirectoryMapper thirdLevelDirectoryMapper;
+	@Override
+	public List<ThirdLevelDirectory> getAllThirdLevelDirectoryBySecondId(Integer secondId) {
+		// TODO Auto-generated method stub
+		return thirdLevelDirectoryMapper.getAllThirdLevelDirectoryBySecondId(secondId);
+	}
+
+}

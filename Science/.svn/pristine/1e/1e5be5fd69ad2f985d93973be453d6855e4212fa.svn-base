@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fujitsu.ttf.yd.mapper.StaffMapper">
+	<!-- 表字段映射 -->
+	<resultMap id="resultMap" type="com.fujitsu.ttf.yd.entity.Staff">
+		<id property="staffId" column="staff_id"/>
+		<result property="staffNumber" column="staff_number"/>
+		<result property="staffName" column="staff_name"/>
+		<result property="staffState" column="staff_state"/>
+		<result property="createdTime" column="created_time"/>
+		<result property="updatedTime" column="updated_time"/>
+		<result property="staffPassword" column="staff_password"/>
+		<result property="roleId" column="role_id"/>
+		<result property="deptId" column="dept_id"/>
+	</resultMap>
+	
+	<!-- 根据员工工号查询员工    -->
+	<select id="getStaffByStaffNumber" resultMap="resultMap" parameterType="java.lang.String">
+		<!-- 查询的sql语句 -->
+		select 
+		 staff_id,staff_number,staff_name,staff_state,created_time,updated_time,staff_password,role_id,dept_id
+		from staff
+		<where>
+			<if test="staffNumber != null">
+			 	staff_number = #{staffNumber}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 插入员工信息 -->
+	<insert id="insertStaff" parameterType="com.fujitsu.ttf.yd.entity.Staff">
+        insert into staff values(
+        	#{staffId},
+        	#{staffNumber},
+        	#{staffName},
+        	#{staffState},
+        	#{createdTime},
+        	#{updatedTime},
+        	#{staffPassword},
+        	#{roleId},
+        	#{deptId}
+        )
+	</insert>
+
+	<!-- 根据员工id查询员工   -->
+	<select id="getStaffById" resultMap="resultMap" parameterType="java.lang.String">
+		<!-- 查询的sql语句 -->
+		select 
+		 staff_id,staff_number,staff_name,staff_state,created_time,updated_time,staff_password,role_id,dept_id
+		from staff
+		<where>
+			<if test="staffId != null">
+			 	staff_id = #{staffId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 删除员工信息 -->
+	<update id="deleteStaffById" parameterType="com.fujitsu.ttf.yd.entity.Staff">
+      UPDATE staff
+      SET staff_state = "0"
+      WHERE
+          staff_id = #{staffId}
+    </update>
+
+	<!-- 更新员工信息 -->
+	<update id="updateStaff" parameterType="com.fujitsu.ttf.yd.entity.Staff">
+      UPDATE staff SET staff_number=#{staffNumber},staff_name=#{staffName},updated_time=#{updatedTime},staff_password=#{staffPassword},role_id=#{roleId},dept_id=#{deptId}
+      WHERE
+          staff_id = #{staffId}
+    </update>
+    
+    <!-- 查询所有员工信息 -->
+	<select id="getStaff" resultMap="resultMap" parameterType="com.fujitsu.ttf.yd.entity.Staff">
+		<!-- 查询的sql语句 -->
+		select staff_id,staff_number,staff_name,staff_state,created_time,updated_time,staff_password,role_id,dept_id from staff where staff_state='1'
+		<where>
+			<if test="staffNumber != null">
+			 	and staff_number = #{staffNumber}	
+			</if>
+			<if test="staffName != null">
+			 	and staff_name = #{staffName}	
+			</if>
+			<if test="staffState != null">
+			 	and staff_state = #{staffState}	
+			</if>
+			<if test="roleId != null">
+			 	and role_id = #{roleId}	
+			</if>
+			<if test="deptId != null">
+			 	and dept_id = #{deptId}	
+			</if>
+			<if test="startTime != null">
+			 	and updated_time &gt; #{startTime}	
+			</if>
+			<if test="endTime != null">
+			 	and updated_time &lt; #{endTime}	
+			</if>
+		</where>
+		order by created_time asc
+	</select>
+    
+</mapper>

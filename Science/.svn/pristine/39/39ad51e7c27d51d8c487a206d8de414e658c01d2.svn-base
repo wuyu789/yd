@@ -1,0 +1,74 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fujitsu.ttf.yd.entity.Parameter;
+import com.fujitsu.ttf.yd.entity.ProductFeatures;
+import com.fujitsu.ttf.yd.mapper.ParameterMapper;
+import com.fujitsu.ttf.yd.mapper.ProductFeaturesMapper;
+import com.fujitsu.ttf.yd.service.ProductFeaturesService;
+
+/**
+*@author shik.jy
+*@date 2019年10月21日
+*@Description
+*/
+public class ProductFeaturesServiceImpl implements ProductFeaturesService {
+
+	@Autowired
+	ProductFeaturesMapper productFeaturesMapper;
+	
+	@Autowired
+	ParameterMapper parameterMapper;
+	
+	@Override
+	public Map<String, Object> getAllProduct(int thridId) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		// 如果是特殊的三级id 暂定为 1，2
+		if(thridId==1||thridId==2) {
+			
+			List<ProductFeatures> proList  = productFeaturesMapper.getAllProductFeatures(thridId);
+			
+			List<Parameter> parameterList =  parameterMapper.getAllParameter();
+			
+			List<Parameter> newPar = new ArrayList<Parameter>();
+			
+			// 第一级目录的所有数据
+			resultMap.put("productFeatures", proList);
+			
+			for(ProductFeatures pro : proList) {
+				// 每次通过id 去找下面的下级
+				newPar = getParameter(pro.getId(),parameterList);
+				resultMap.put(pro.getFeaturesName(), newPar);
+			}
+			
+		}
+		return resultMap;
+	}
+
+	/**
+	 * @Description 通过上级的id 找所有下级
+	 * @param id
+	 * @param list
+	 * @return
+	 */
+	private List<Parameter> getParameter(int id,List<Parameter> list){
+		
+		List<Parameter> newRsultList = new ArrayList<>();
+		
+		for(Parameter par : list){
+			if(id==par.getProductFeaturesId()) {
+				newRsultList.add(par);
+			}
+		}
+		return newRsultList;
+	}
+
+}

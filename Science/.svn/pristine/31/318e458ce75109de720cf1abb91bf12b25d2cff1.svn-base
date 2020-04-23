@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service;
+
+import java.util.List;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+
+/**
+ * @author wuyu
+ *
+ */
+public interface ThirdLevelDirectoryService {
+	  Object getAllThirdLevelDirectoryBySecondId(Integer secondId,Integer page,Integer pageSize);
+	
+	  Object selectThirdLevelDirectoryByThirdName(String thirdName,Integer page,Integer pageSize);
+	  
+	  ThirdLevelDirectory selectDataByThirdName(String thirdName);
+	  
+	  List<ThirdLevelDirectory> selectCollectDirectory(Integer userId,Integer page,Integer pageSize);
+	  
+	  public void insertCollect(Integer userId,Integer thirdId);
+	  
+	  public void deleteCollect(Integer userId,Integer thirdId);
+}

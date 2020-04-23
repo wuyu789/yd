@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="LOG_PATH" value="${logging.file}"></property>
+
+	<appender name="IMPORT_DATA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>./log/crawler.log</file>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>./log/crawler_%d{yyyyMM}-%i.log
+	        </fileNamePattern>
+	        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	            <maxFileSize>20MB</maxFileSize>
+	        </timeBasedFileNamingAndTriggeringPolicy>
+	        <maxHistory>100</maxHistory>
+	    </rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+	<appender name="SHARE_PROFIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>./log/profit.log</file>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>./log/profit_%d{yyyyMM}-%i.log
+	        </fileNamePattern>
+	        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	            <maxFileSize>20MB</maxFileSize>
+	        </timeBasedFileNamingAndTriggeringPolicy>
+	        <maxHistory>100</maxHistory>
+	    </rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+	<appender name="TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>./log/trace.log</file>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>./log/trace_%d{yyyyMMdd}-%i.log
+	        </fileNamePattern>
+	        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	            <maxFileSize>20MB</maxFileSize>
+	        </timeBasedFileNamingAndTriggeringPolicy>
+	        <maxHistory>100</maxHistory>
+	    </rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+	<appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>./log/error.log</file>
+		<append>true</append>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>./log/error_%d{yyyyMM}-%i.log
+	        </fileNamePattern>
+	        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	            <maxFileSize>20MB</maxFileSize>
+	        </timeBasedFileNamingAndTriggeringPolicy>
+	        <maxHistory>100</maxHistory>
+	    </rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="crawler" additivity="true" level="info">
+		<appender-ref ref="IMPORT_DATA" />
+	</logger>
+	<logger name="profit" additivity="true" level="info">
+		<appender-ref ref="SHARE_PROFIT" />
+	</logger>
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="TRACE" />
+		<appender-ref ref="ERROR" />
+	</root>
+</configuration>

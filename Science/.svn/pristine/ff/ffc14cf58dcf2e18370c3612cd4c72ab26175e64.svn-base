@@ -1,0 +1,21 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+
+/**
+ * @author wuyu
+ *
+ */
+public interface ThirdLevelDirectoryService {
+	public Map<String,Object> getAllThirdLevelDirectoryBySecondId(Integer secondId,Integer page,Integer pageSize);
+	
+	 public List<ThirdLevelDirectory> selectThirdLevelDirectoryByThirdName(@Param("thirdName")String thirdName);
+}

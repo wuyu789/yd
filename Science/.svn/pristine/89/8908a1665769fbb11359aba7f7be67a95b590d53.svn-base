@@ -1,0 +1,39 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.Users;
+import com.fujitsu.ttf.yd.mapper.UsersMapper;
+import com.fujitsu.ttf.yd.service.UsersService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class UsersServiceImpl implements UsersService {
+
+	@Autowired
+	private UsersMapper usersMapper;
+	
+	@Override
+	public void insertUsers(Users users) {
+		usersMapper.insertUsers(users);
+	}
+
+	@Override
+	public Users findUsersByOpenid(String openid) {
+		return usersMapper.findUsersByOpenid(openid);
+	}
+
+	@Override
+	public void UpdateUsers(Users users) {
+		
+		usersMapper.UpdateUsers(users);
+	}
+
+}

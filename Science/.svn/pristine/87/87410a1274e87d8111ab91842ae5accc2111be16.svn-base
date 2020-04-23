@@ -1,0 +1,162 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.Collect;
+import com.fujitsu.ttf.yd.entity.Parameter;
+import com.fujitsu.ttf.yd.entity.ProductFeatures;
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.entity.TypeOne;
+import com.fujitsu.ttf.yd.entity.TypeTwo;
+import com.fujitsu.ttf.yd.mapper.CollectMapper;
+import com.fujitsu.ttf.yd.mapper.ParameterMapper;
+import com.fujitsu.ttf.yd.mapper.ProductFeaturesMapper;
+import com.fujitsu.ttf.yd.mapper.ThirdLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.mapper.TypeOneMapper;
+import com.fujitsu.ttf.yd.mapper.TypeTwoMapper;
+import com.fujitsu.ttf.yd.service.ProductFeaturesService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+/**
+*@author shik.jy
+*@date 2019年10月21日
+*@Description
+*/
+@Service
+public class ProductFeaturesServiceImpl implements ProductFeaturesService {
+
+	@Autowired
+	private ProductFeaturesMapper productFeaturesMapper;
+	
+	@Autowired
+	private ParameterMapper parameterMapper;
+	
+	@Autowired
+	private TypeOneMapper typeOneMapper;
+	
+	@Autowired
+	private TypeTwoMapper typeTwoMapper;
+	
+	@Autowired
+	private CollectMapper collectMapper;
+	
+	@Autowired
+	private ThirdLevelDirectoryMapper thirdLevelDirectoryMapper;
+	
+	@Override
+	public Map<String, Object> getAllProduct(int secondId) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		// 如果是特殊的二级id 暂定为 1，2
+		if(secondId==1||secondId==2) {
+			
+			// 第一张表的所有数据
+			List<ProductFeatures> proList  = productFeaturesMapper.getAllProductFeatures(secondId);
+			
+			List<Parameter> parameterList =  parameterMapper.getAllParameter();
+			
+			List<Parameter> newPar = new ArrayList<Parameter>();
+			
+			// 第一级目录的所有数据
+			resultMap.put("productFeatures", proList);
+			
+			for(ProductFeatures pro : proList) {
+				// 每次通过id 去找下面的下级
+				newPar = getParameter(pro.getId(),parameterList);
+				resultMap.put(pro.getKey(), newPar);
+			}
+			
+		}
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, Object> getAllProduct(String key, String value, int page, int size,int secondId) {
+		PageHelper.startPage(page, size);
+		List<Integer> ids = new ArrayList<>();
+		// 二级id
+		if(secondId==1) {
+			List<TypeOne> type=typeOneMapper.getAllType(key, value);
+			for(TypeOne one : type) {
+				ids.add(one.getId());
+			}
+		}else if(secondId == 2) {
+			List<TypeTwo> type=typeTwoMapper.getAllType(key, value);
+			for(TypeTwo two : type) {
+				ids.add(two.getId());
+			}
+		}
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.getAllThirdLevelData(ids);
+		for(ThirdLevelDirectory thrid : list) {
+			if (thrid.getSecondId() == 1) {
+				thrid.setPdfName("/construction_machinery/industrial_rubber_hose/" + thrid.getPdfName());
+				thrid.setThirdImg("/construction_machinery/hose_img/" + thrid.getThirdImg());
+			} else if (thrid.getSecondId() == 2) {
+				thrid.setPdfName("/construction_machinery/hydraulic_hose/" + thrid.getPdfName());
+				thrid.setThirdImg("/construction_machinery/hose_img/" + thrid.getThirdImg());
+			} else{
+				thrid.setPdfName("/rail_transit/pdf/" + thrid.getPdfName());
+				thrid.setThirdImg("/rail_transit/img/" + thrid.getThirdImg());
+			}
+			if(thrid.getTypeId()==1) {
+				TypeOne typeOne = typeOneMapper.selectTypeOneById(thrid.getTypeId());
+				thrid.setTypeOne(typeOne);
+			}
+			if(thrid.getTypeId()==2) {
+				TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(thrid.getTypeId());
+				thrid.setTypeTwo(typeTwo);
+			}
+			// 通过用户id获取收藏表中的记录
+			List<Collect> collectList = collectMapper.selectCollectThirdId(1);
+			if (collectList.size() != 0) {
+				for (Collect collect : collectList) {
+					if (collect.getThirdId() == thrid.getId()) {
+						thrid.setIsCollect(1);
+						break;
+					} else {
+						thrid.setIsCollect(0);
+					}
+				}
+			} else {
+				thrid.setIsCollect(0);
+			}
+		}
+		
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(list);
+		// 组织返回的map
+	 	Map<String, Object> resultMap = new HashMap<String, Object>();
+	 	resultMap.put("totalCount", entityPage.getTotal());
+	 	resultMap.put("data",entityPage.getList());
+	 	resultMap.put("page",page);
+	 	resultMap.put("size",size); 
+		return resultMap;
+		
+	}
+
+	/**
+	 * @Description 通过上级的id 找所有下级
+	 * @param id
+	 * @param list
+	 * @return
+	 */
+	private List<Parameter> getParameter(int id,List<Parameter> list){
+		
+		List<Parameter> newRsultList = new ArrayList<>();
+		
+		for(Parameter par : list){
+			if(id==par.getProductFeaturesId()) {
+				newRsultList.add(par);
+			}
+		}
+		return newRsultList;
+	}
+
+}

@@ -1,0 +1,238 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.Collect;
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.entity.TypeOne;
+import com.fujitsu.ttf.yd.entity.TypeTwo;
+import com.fujitsu.ttf.yd.mapper.CollectMapper;
+import com.fujitsu.ttf.yd.mapper.ThirdLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.mapper.TypeOneMapper;
+import com.fujitsu.ttf.yd.mapper.TypeTwoMapper;
+import com.fujitsu.ttf.yd.service.ThirdLevelDirectoryService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class ThirdLevelDirectoryServiceImpl implements ThirdLevelDirectoryService {
+
+	@Autowired
+	private ThirdLevelDirectoryMapper thirdLevelDirectoryMapper;
+	
+	@Autowired
+	private TypeOneMapper typeOneMapper;
+	
+	@Autowired
+	private TypeTwoMapper typeTwoMapper;
+
+	@Autowired
+	private CollectMapper collectMapper;
+	
+	
+	@Override
+	public Object getAllThirdLevelDirectoryBySecondId(Integer secondId,Integer page,Integer pageSize) {
+		if(page==null || pageSize==null) {
+			page=1;
+			pageSize=10;
+		}
+		PageHelper.startPage(page, pageSize);
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.getAllThirdLevelDirectoryBySecondId(secondId);
+		List<ThirdLevelDirectory> thirdLevelDirectoryList = new ArrayList<ThirdLevelDirectory>();
+		for (int i = 0; i < list.size(); i++) {
+			ThirdLevelDirectory directory = new ThirdLevelDirectory();
+			int id = list.get(i).getId();
+			directory.setId(id);
+			directory.setTitle(list.get(i).getTitle());
+			directory.setSecondId(list.get(i).getSecondId());
+			directory.setThirdName(list.get(i).getThirdName());
+			directory.setDescribe(list.get(i).getDescribe());
+			directory.setTypeId(list.get(i).getTypeId());
+			// 通过用户id获取收藏表中的记录
+			List<Collect> collectList = collectMapper.selectCollectThirdId(1);
+			if(collectList.size()!=0) {
+				for(Collect collect:collectList) {
+					if(collect.getThirdId()==id) {
+						directory.setIsCollect(1);
+						break;
+					}else {
+						directory.setIsCollect(0);
+					}
+				}
+			}else {
+				directory.setIsCollect(0);
+			}
+			// 1: 工业胶管 2：液压胶管 3： 乘员舱 4: 车身 5: 转向架 6: 动力总成 7: 驾驶员工作区
+			if (list.get(i).getSecondId() == 1) {
+				directory.setPdfName("/construction_machinery/industrial_rubber_hose/" + list.get(i).getPdfName());
+				directory.setThirdImg("/construction_machinery/hose_img/" + list.get(i).getThirdImg());
+			} else if (list.get(i).getSecondId() == 2) {
+				directory.setPdfName("/construction_machinery/hydraulic_hose/" + list.get(i).getPdfName());
+				directory.setThirdImg("/construction_machinery/hose_img/" + list.get(i).getThirdImg());
+			} else{
+				directory.setPdfName("/rail_transit/pdf/" + list.get(i).getPdfName());
+				directory.setThirdImg("/rail_transit/img/" + list.get(i).getThirdImg());
+			}
+			
+			thirdLevelDirectoryList.add(directory);
+		}
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(list);
+		
+		// 
+		if(entityPage.getPages()<page) {
+			thirdLevelDirectoryList=null;
+		}
+		if(thirdLevelDirectoryList!=null) {
+			for(ThirdLevelDirectory directory:thirdLevelDirectoryList) {
+				if(directory.getSecondId()==1) {
+					TypeOne typeOne = typeOneMapper.selectTypeOneById(directory.getTypeId());
+					directory.setTypeOne(typeOne);
+				}else if(directory.getSecondId()==2) {
+					TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(directory.getTypeId());
+					directory.setTypeTwo(typeTwo);
+				}
+			}
+		}
+		entityPage.setList(thirdLevelDirectoryList);
+		return entityPage;
+	}
+
+	@Override
+	public Object selectThirdLevelDirectoryByThirdName(String thirdName,Integer page,Integer pageSize) {
+		if(page==null || pageSize==null) {
+			page=1;
+			pageSize=10;
+		}
+		PageHelper.startPage(page, pageSize);
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.selectThirdLevelDirectoryByThirdName(thirdName);
+		List<ThirdLevelDirectory> thirdLevelDirectoryList = new ArrayList<ThirdLevelDirectory>();
+		for (int i = 0; i < list.size(); i++) {
+			ThirdLevelDirectory directory = new ThirdLevelDirectory();
+			int id = list.get(i).getId();
+			directory.setId(id);
+			directory.setSecondId(list.get(i).getSecondId());
+			directory.setThirdName(list.get(i).getThirdName());
+			directory.setDescribe(list.get(i).getDescribe());
+			directory.setTypeId(list.get(i).getTypeId());
+			// 通过用户id获取收藏表中的记录,(现在是写死1)
+			List<Collect> collectList = collectMapper.selectCollectThirdId(1);
+			if(collectList.size()!=0) {
+				for(Collect collect:collectList) {
+					if(collect.getThirdId()==id) {
+						directory.setIsCollect(1);
+						break;
+					}else {
+						directory.setIsCollect(0);
+					}
+				}
+			}else {
+				directory.setIsCollect(0);
+			}
+			// 1: 工业胶管 2：液压胶管 3： 乘员舱 4: 车身 5: 转向架 6: 动力总成 7: 驾驶员工作区
+			if (list.get(i).getSecondId() == 1) {
+				directory.setPdfName("/construction_machinery/industrial_rubber_hose/" + list.get(i).getPdfName());
+				directory.setThirdImg("/construction_machinery/hose_img/" + list.get(i).getThirdImg());
+			} else if (list.get(i).getSecondId() == 2) {
+				directory.setPdfName("/construction_machinery/hydraulic_hose/" + list.get(i).getPdfName());
+				directory.setThirdImg("/construction_machinery/hose_img/" + list.get(i).getThirdImg());
+			} else{
+				directory.setPdfName("/rail_transit/pdf/" + list.get(i).getPdfName());
+				directory.setThirdImg("/rail_transit/img/" + list.get(i).getThirdImg());
+			}
+			thirdLevelDirectoryList.add(directory);
+		}
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(list);
+		
+		if(entityPage.getPages()<page) {
+			thirdLevelDirectoryList=null;
+		}
+		if(thirdLevelDirectoryList!=null) {
+			for(ThirdLevelDirectory directory:thirdLevelDirectoryList) {
+				if(directory.getSecondId()==1) {
+					TypeOne typeOne = typeOneMapper.selectTypeOneById(directory.getTypeId());
+					directory.setTypeOne(typeOne);
+				}else if(directory.getSecondId()==2) {
+					TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(directory.getTypeId());
+					directory.setTypeTwo(typeTwo);
+				}
+			}
+		}
+		entityPage.setList(thirdLevelDirectoryList);
+		return entityPage;
+	}
+
+	@Override
+	public ThirdLevelDirectory selectDataByThirdName(String thirdName) {
+		
+		return thirdLevelDirectoryMapper.selectDataByThirdName(thirdName);
+	}
+
+	@Override
+	public Object selectCollectDirectory(Integer userId,Integer page,Integer pageSize) {
+		if(page==null || pageSize==null) {
+			page=1;
+			pageSize=10;
+		}
+		PageHelper.startPage(page, pageSize);
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.selectCollectDirectory(userId);
+		if(list!=null) {
+			for(ThirdLevelDirectory directory:list) {
+				// 0:没有被收藏   1:被收藏
+				directory.setIsCollect(1);
+				// 1.工具胶管   2.液压胶管   
+				if (directory.getSecondId() == 1) {
+					directory.setPdfName("/construction_machinery/industrial_rubber_hose/" + directory.getPdfName());
+					directory.setThirdImg("/construction_machinery/hose_img/" + directory.getThirdImg());
+					TypeOne typeOne = typeOneMapper.selectTypeOneById(directory.getTypeId());
+					directory.setTypeOne(typeOne);
+				} else if (directory.getSecondId() == 2) {
+					directory.setPdfName("/construction_machinery/hydraulic_hose/" + directory.getPdfName());
+					directory.setThirdImg("/construction_machinery/hose_img/" + directory.getThirdImg());
+					TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(directory.getTypeId());
+					directory.setTypeTwo(typeTwo);
+				} else{
+					directory.setPdfName("/rail_transit/pdf/" + directory.getPdfName());
+					directory.setThirdImg("/rail_transit/img/" + directory.getThirdImg());
+				}
+			}
+		}
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(list);
+		if(entityPage.getPages()<page) {
+			list=null;
+		}
+		if(list!=null) {
+			for(ThirdLevelDirectory directory:list) {
+				if(directory.getSecondId()==1) {
+					TypeOne typeOne = typeOneMapper.selectTypeOneById(directory.getTypeId());
+					directory.setTypeOne(typeOne);
+				}else if(directory.getSecondId()==2) {
+					TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(directory.getTypeId());
+					directory.setTypeTwo(typeTwo);
+				}
+			}
+		}
+		entityPage.setList(list);
+		return entityPage;
+	}
+
+	@Override
+	public void insertCollect(Integer userId, Integer thirdId) {
+		
+		thirdLevelDirectoryMapper.insertCollect(userId, thirdId);
+	}
+
+	@Override
+	public void deleteCollect(Integer userId, Integer thirdId) {
+		
+		thirdLevelDirectoryMapper.deleteCollect(userId, thirdId);
+	}
+
+}

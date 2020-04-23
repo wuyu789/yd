@@ -1,0 +1,23 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * @author wuyu
+ *
+ */
+@Setter
+@Getter
+public class TypeTwo {
+    private Integer id;
+    private String partNumber;
+    private String hoseId;
+    private String wpPsi;
+    private String bendRadius;
+    private String lowestTemperature;
+    private String highestTemperature;
+}

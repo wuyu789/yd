@@ -1,0 +1,58 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.service.PDFService;
+import com.fujitsu.ttf.yd.utils.Constants;
+import com.fujitsu.ttf.yd.utils.SendEmailUtils;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class PDFMergeServiceImpl implements PDFService {
+
+	@Override
+	public void PDFMerge(List<String> list,String targetAddress) {
+		PDDocument doc = null;
+		//String workpath = "E:/test/";
+		long currentTimeMillis = System.currentTimeMillis();
+		//实例化PDF工具类
+        PDFMergerUtility mergerUtil = new PDFMergerUtility();
+        //设置合并后的文件
+        mergerUtil.setDestinationFileName(Constants.MERGE_PATH + currentTimeMillis + ".pdf");
+		for(int i=0;i<list.size();i++) {
+			File file = new File(Constants.WORK_PATH + list.get(i));
+            try {
+				doc = PDDocument.load(file);
+				//添加要合并的文件
+	            mergerUtil.addSource(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		//合并
+        try {
+			mergerUtil.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				doc.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+        // 发送邮件
+        SendEmailUtils.sendEmail(currentTimeMillis,targetAddress);
+	}
+
+}

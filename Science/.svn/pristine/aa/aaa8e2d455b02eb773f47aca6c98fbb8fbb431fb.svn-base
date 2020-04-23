@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.UsersMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.Users">
+       <result property="id" column="id"/>
+       <result property="companyName" column="company_name"/>
+       <result property="contactPerson" column="contact_person"/>
+       <result property="eamil" column="eamil"/>
+       <result property="handbookName" column="handbook_name"/>
+       <result property="userId" column="user_id"/>
+     </resultMap>
+ 	
+	<insert id="insertUsers" parameterType="com.fujitsu.ttf.yd.entity.Users">
+	   insert into users(company_name,contact_person,eamil,handbook_name,user_id) values (#{companyName},#{contactPerson},#{eamil},#{handbookName},#{userId})
+	</insert>
+	
+	 <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`company_name`,
+		`contact_person`,
+		`eamil`,
+		`handbook_name`,
+		`user_id`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`users`
+	</sql>
+	
+	<select id="findUsersByUserId" resultMap="idmap" parameterType="string">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where user_id=#{userId}
+    </select>
+    
+    <update id="UpdateUsers" parameterType="com.fujitsu.ttf.yd.entity.Users">
+       update users 
+       <set>
+  			<if test="companyName!=null and companyName!=''">
+  				company_name=#{companyName},
+  			</if>
+  			<if test="contactPerson!=null and contactPerson!=''">
+  				contact_person=#{contactPerson},
+  			</if>
+  			<if test="eamil!=null and eamil!=''">
+  				eamil=#{eamil},
+  			</if>
+  			<if test="handbookName!=null and handbookName!=''">
+  				handbook_name=#{handbookName},
+  			</if>
+  			<if test="handbookName!=null and handbookName!=''">
+  				handbook_name=#{handbookName}
+  			</if>
+  		</set>
+       where user_id=#{userId}
+    </update>
+</mapper>

@@ -1,0 +1,83 @@
+package com.fujitsu.ttf.yd.shiro;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+
+import com.fujitsu.ttf.yd.enums.ResultEnum;
+import com.fujitsu.ttf.yd.exception.ErrorException;
+import com.fujitsu.ttf.yd.utils.JWTUtil;
+
+
+/**
+ * 
+ * @Description 自定义认证和授权的realm
+ * @author 鲜攀
+ * @date: 2019年6月27日 下午11:37:27
+ */
+public class MyRealm extends AuthorizingRealm {
+	
+//	@Autowired
+//    private IStaffService staffService;
+
+    /**
+     * 大坑！，必须重写此方法，不然Shiro会报错
+     */
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof JWTToken;
+    }
+
+    /**
+     * 只有当需要检测用户权限的时候才会调用此方法，例如checkRole,checkPermission之类的
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+    	// 从token 中获取员工姓名
+//        String staffNumber = JWTUtil.getStaffNumber(principals.toString());
+        // 根据员工姓名查询员工信息
+//        Staff staff = staffService.findStaffByStaffNumber(staffNumber);
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        // 添加角色
+//        simpleAuthorizationInfo.addRole(staff.getRole().getRoleName());
+        Set<String> permission = new HashSet<>();
+        // 添加权限
+//        Set<Permission> permissionSet = staff.getRole().getPermission();
+//        permissionSet.forEach(loop ->{
+//        	permission.add(loop.getPermissionName());
+//        });
+        simpleAuthorizationInfo.addStringPermissions(permission);
+        return simpleAuthorizationInfo;
+    }
+
+    /**
+     * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+    	String token = (String) auth.getCredentials();
+        // 解密获得staffNumber，用于和数据库进行对比
+        String staffNumber = JWTUtil.getStaffNumber(token);
+        if (staffNumber == null) {
+            throw new ErrorException(ResultEnum.TOKEN_IS_ILLEGAL);
+        }
+        // 根据token 中的员工工号判断员工信息是否正确
+//        Staff staff = staffService.findStaffByStaffNumber(staffNumber);
+//		if (staff == null) {
+//            throw new ErrorException(ResultEnum.STAFF_NUMBER_NOT_EXIST);
+//        }
+		// 校验token 是否合法
+//        if (!JWTUtil.verify(token, staffNumber, staff.getStaffPassword())) {
+//            throw new ErrorException(ResultEnum.TOKEN_IS_ILLEGAL);
+//        }
+        return new SimpleAuthenticationInfo(token, token, getName());
+    }
+}

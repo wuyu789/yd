@@ -1,0 +1,18 @@
+package com.fujitsu.ttf.yd.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.fujitsu.ttf.yd.entity.ProductFeatures;
+
+/**
+*@author shik.jy
+*@date 2019年10月21日
+*@Description
+*/
+@Mapper
+public interface ProductFeaturesMapper {
+
+	List<ProductFeatures> getAllProductFeatures(int secondId);
+}

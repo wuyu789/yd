@@ -1,0 +1,32 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.TypeOne;
+import com.fujitsu.ttf.yd.mapper.TypeOneMapper;
+import com.fujitsu.ttf.yd.service.TypeOneService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Service
+public class TypeOneServiceImpl implements TypeOneService {
+
+	/* (non-Javadoc)
+	 * @see com.fujitsu.ttf.yd.service.TypeOneService#selectTypeOneById(java.lang.Integer)
+	 */
+	@Autowired
+	private TypeOneMapper typeOneMapper;
+	
+	@Override
+	public TypeOne selectTypeOneById(Integer id) {
+		// TODO Auto-generated method stub
+		return typeOneMapper.selectTypeOneById(id);
+	}
+
+}

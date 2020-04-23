@@ -1,0 +1,186 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.utils;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fujitsu.ttf.yd.entity.SendRecord;
+import com.fujitsu.ttf.yd.service.SendRecordService;
+
+/**
+ * @author wuyu
+ *
+ */
+@Component
+public class SendEmails {
+	
+	private static SendRecordService sendRecordService;
+
+	public SendRecordService getSendRecordService() {
+		return sendRecordService;
+	}
+
+	@Autowired
+	public void setSendRecordService(SendRecordService sendRecordService) {
+	   SendEmails.sendRecordService = sendRecordService;
+	}
+	
+	public static void sendEmail(long pdfName,String targetAddress,String handbookName,String token) throws Exception {
+		 
+		Properties prop = new Properties();
+//		//此处使用163邮箱
+//		prop.setProperty("mail.smtp.host", "smtp.163.com");
+//		prop.setProperty("mail.transport.protocol", "smtp");
+//		prop.setProperty("mail.smtp.auth", "true");
+//		prop.setProperty("mail.smtp.port", "465");
+//		//prop.setProperty("mail.smtp.port", "465");
+//	    prop.setProperty("mail.smtp.socketFactory.port", "465");
+//	    prop.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+//	    prop.setProperty("mail.smtp.socketFactory.fallback", "false");
+		// 此处使用腾讯企业qq邮箱
+		prop.setProperty("mail.smtp.host", "smtp.exmail.qq.com");
+		prop.setProperty("mail.transport.protocol", "smtp");
+		prop.setProperty("mail.smtp.auth", "true");
+		prop.setProperty("mail.smtp.port", "465");
+	    prop.setProperty("mail.smtp.socketFactory.port", "465");
+	    prop.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+	    prop.setProperty("mail.smtp.socketFactory.fallback", "false");
+		// 使用JavaMail发送邮件的5个步骤
+		// 1、创建session
+		Session session = Session.getInstance(prop);
+		// 开启Session的debug模式，这样就可以查看到程序发送Email的运行状态
+		session.setDebug(true);
+		// 2、通过session得到transport对象
+		Transport ts = session.getTransport();
+		// 3、连上邮件服务器
+		//ts.connect("smtp.exmail.qq.com", "wuyu13276284262@163.com", "wuyu194120");
+		ts.connect("smtp.exmail.qq.com", "industry@contitechchinasolutions.com.cn", "getji2-mejmAt-dugkyf");
+		// 4、创建邮件
+		Message message = createMixedMail(session,pdfName,targetAddress,handbookName);
+		// 5、发送邮件
+		ts.sendMessage(message, message.getAllRecipients());
+		// 6.保存发送记录
+		// 保存发送记录
+		SendRecord sendRecord =new SendRecord();
+		sendRecord.setSendEmail(targetAddress);
+		sendRecord.setSendName(handbookName);
+		// userId写死  todo
+		 sendRecord.setUserId(token);
+		 Date date = new Date();
+		 SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		 String format = sdf.format(date);
+		 sendRecord.setSendTime(Timestamp.valueOf(format));
+		 System.err.println(sendRecord);
+		 //new SendRecordServiceImpl().insertSendRecord(sendRecord);
+		 System.out.println(sendRecordService);
+		 sendRecordService.insertSendRecord(sendRecord);
+		 ts.close();
+	}
+ 
+	/**
+	 * @Method: createMixedMail
+	 * @Description: 生成一封带附件和带图片的邮件
+	 * @Anthor:wu yu 
+	 *
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	public static MimeMessage createMixedMail(Session session,long pdfName,String targetAddress,String handbookName) throws Exception {
+		// 创建邮件
+		MimeMessage message = new MimeMessage(session);
+ 
+		// 设置邮件的基本信息
+		// 邮件发送人 
+		message.setFrom(new InternetAddress("industry@contitechchinasolutions.com.cn"));
+		//邮件接收人
+		message.setRecipients(Message.RecipientType.TO, new InternetAddress().parse(targetAddress));//xdp_gacl@sina.cn
+		//主题
+		message.setSubject("【大陆集团康迪泰克】请查收您的专属手册");
+ 
+		// 正文
+		MimeBodyPart text = new MimeBodyPart();
+		//text.setContent("xxx这是女的xxxx<br/><img src='cid:aaa.jpg'>啦啦啦", "text/html;charset=UTF-8");
+		text.setContent("<div>尊敬的客户：</div><br/>"
+				+"<div>您好!</div><br/>"
+				+ "<div>附件是为您定制的专属产品手册，敬请查收。</div><br/>"
+				+ "<div>想了解更多大陆集团的资讯和动态，欢迎前往官方网站  https://continental-industry.com 或扫描下方二维码，关注官方微信公众号。</div><br/>"
+				+ "<div><img src='cid:1.png'></div><br/>"
+				+ "<div>顺颂商祺,</div><br/>"
+				+ "<div>Visitor address / 地址:</div>"
+				+ "<div>ContiTech Holding (Shanghai) Co., Ltd.</div>"
+				+ "<div>康迪泰克投资（上海）有限公司</div>"
+				+ "<div>20F Building A, North American Plaza, 518 Kunming Road</div>"
+				+ "<div>Shanghai 200082 P.R. China</div>"
+				+ "<div>上海市杨浦区昆明路518号北美广场A栋20楼</div>"
+				+ "<div><img src='cid:2.png'></div>", "text/html;charset=UTF-8");
+		// 图片
+		MimeBodyPart image = new MimeBodyPart();
+		image.setDataHandler(new DataHandler(new FileDataSource("/root/1.png")));
+		image.setContentID("1.png");
+		
+		// 图片
+		MimeBodyPart image2 = new MimeBodyPart();
+		image2.setDataHandler(new DataHandler(new FileDataSource("/root/2.png")));
+		image2.setContentID("2.png");
+ 
+		// 附件1
+		MimeBodyPart attach = new MimeBodyPart();
+		DataHandler dh = new DataHandler(new FileDataSource(Constants.MERGE_PATH+handbookName+".pdf"));
+		attach.setDataHandler(dh);
+		attach.setFileName(dh.getName());
+ 
+		// 附件2
+//		MimeBodyPart attach2 = new MimeBodyPart();
+//		DataHandler dh2 = new DataHandler(new FileDataSource("D:\\2.pdf"));
+//		attach2.setDataHandler(dh2);
+//		attach2.setFileName(MimeUtility.encodeText(dh2.getName()));
+ 
+		//容器1
+		// 描述关系:正文和图片
+		MimeMultipart mp1 = new MimeMultipart();
+		mp1.addBodyPart(text);
+		mp1.addBodyPart(image);
+		mp1.addBodyPart(image2);
+		mp1.setSubType("related");
+ 
+		// 代表正文的bodypart
+		MimeBodyPart content = new MimeBodyPart();
+		content.setContent(mp1);
+		
+		//容器2
+		// 描述关系:正文和附件
+		MimeMultipart mp2 = new MimeMultipart();
+		mp2.addBodyPart(attach);       //附件1bodypart
+		//mp2.addBodyPart(attach2);	   //附件2borypart
+		mp2.addBodyPart(content);      //正文加图片borypart
+		mp2.setSubType("mixed");
+ 
+		message.setContent(mp2);
+		message.saveChanges();
+ 
+		// 将文件内容此文件方式保存到本地
+		//message.writeTo(new FileOutputStream("E:\\MixedMail.eml"));
+ 
+		// 返回创建好的的邮件
+		return message;
+	}
+
+}

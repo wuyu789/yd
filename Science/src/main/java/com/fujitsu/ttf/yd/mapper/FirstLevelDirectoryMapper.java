@@ -1,0 +1,17 @@
+package com.fujitsu.ttf.yd.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.fujitsu.ttf.yd.entity.FirstLevelDirectory;
+
+/**
+ * @author wuyu
+ *
+ */
+@Mapper
+public interface FirstLevelDirectoryMapper {
+	
+	public List<FirstLevelDirectory> getAllDirectory();
+}

@@ -1,0 +1,46 @@
+package com.fujitsu.ttf.yd.vo.management;
+
+import com.fujitsu.ttf.yd.utils.PageQueryUtils;
+
+import jxl.write.DateTime;
+import lombok.Getter;
+import lombok.Setter;
+
+/** 
+* @ClassName: StaffVo 
+* @author shik.jy
+* @date 2019年10月11日 下午5:20:36 
+*  
+*/
+@Getter
+@Setter
+public class StaffVo extends PageQueryUtils{
+
+	/** 员工ID */
+    private String staffId ;
+    /** 登录账号 */
+    private String staffNumber ;
+    /** 登陆密码 */
+    private String staffPassword ;
+    /** 真实姓名 */
+    private String staffName ;
+    /** 员工状态 */
+    private String staffState;
+    /** 创建时间 */
+    private DateTime createTime;
+    /** 修改时间 */
+    private DateTime updateTime;
+    /** 角色ID */
+    private Integer roleId ;
+    /** 角色名称 */
+    private String roleName ;
+    /** 部门ID */
+    private Integer deptId ;
+    /** 部门名称 */
+    private String deptName ;
+    /** 开始时间 */
+    private DateTime startTime;
+    /** 结束时间*/
+    private DateTime endTime;
+    
+}

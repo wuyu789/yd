@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.CoverMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.Cover">
+       <result property="id" column="id"/>
+       <result property="coverName" column="cover_name"/>
+       <result property="coverUrl" column="cover_url"/>
+     </resultMap>
+     
+     <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`cover_name`,
+		`cover_url`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`cover`
+	</sql>
+     
+     <select id="getAllCover" resultMap="idmap">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+     </select>
+     
+     <select id="getCoverById" resultMap="idmap" parameterType="Integer">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where id=#{0}
+     </select>
+</mapper>

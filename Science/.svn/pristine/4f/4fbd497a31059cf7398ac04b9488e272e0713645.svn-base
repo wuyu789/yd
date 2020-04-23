@@ -1,0 +1,325 @@
+package com.fujitsu.ttf.yd.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fujitsu.ttf.yd.entity.Collect;
+import com.fujitsu.ttf.yd.entity.Parameter;
+import com.fujitsu.ttf.yd.entity.ProductFeatures;
+import com.fujitsu.ttf.yd.entity.ThirdLevelDirectory;
+import com.fujitsu.ttf.yd.entity.TypeOne;
+import com.fujitsu.ttf.yd.entity.TypeTwo;
+import com.fujitsu.ttf.yd.mapper.CollectMapper;
+import com.fujitsu.ttf.yd.mapper.ParameterMapper;
+import com.fujitsu.ttf.yd.mapper.ProductFeaturesMapper;
+import com.fujitsu.ttf.yd.mapper.ThirdLevelDirectoryMapper;
+import com.fujitsu.ttf.yd.mapper.TypeOneMapper;
+import com.fujitsu.ttf.yd.mapper.TypeTwoMapper;
+import com.fujitsu.ttf.yd.service.ProductFeaturesService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+/**
+ * @author shik.jy
+ * @date 2019年10月21日
+ * @Description
+ */
+@Service
+public class ProductFeaturesServiceImpl implements ProductFeaturesService {
+
+	@Autowired
+	private ProductFeaturesMapper productFeaturesMapper;
+
+	@Autowired
+	private ParameterMapper parameterMapper;
+
+	@Autowired
+	private TypeOneMapper typeOneMapper;
+
+	@Autowired
+	private TypeTwoMapper typeTwoMapper;
+
+	@Autowired
+	private CollectMapper collectMapper;
+
+	@Autowired
+	private ThirdLevelDirectoryMapper thirdLevelDirectoryMapper;
+
+	@Override
+	public Map<String, Object> getAllProduct(int secondId) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		// 如果是特殊的二级id 暂定为 1，2
+		if (secondId == 1 || secondId == 2) {
+
+			// 第一张表的所有数据
+			List<ProductFeatures> proList = productFeaturesMapper.getAllProductFeatures(secondId);
+
+			List<Parameter> parameterList = parameterMapper.getAllParameter();
+
+			List<Parameter> newPar = new ArrayList<Parameter>();
+
+			// 第一级目录的所有数据
+			resultMap.put("productFeatures", proList);
+
+			for (ProductFeatures pro : proList) {
+				// 每次通过id 去找下面的下级
+				newPar = getParameter(pro.getId(), parameterList);
+				resultMap.put(pro.getKey(), newPar);
+			}
+
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> getAllProduct(List<String> keys, List<String> values, int page, int size, int secondId) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		List<Integer> ids = new ArrayList<>();
+		List<Object> res = new ArrayList<>();
+		// 什么条件都没有的时候 这个时候需要查询的是有多少种产品
+		if ( null == keys && null==values) {
+			return getAllProductList(secondId);
+		}
+		// 正常搜索逻辑
+		ids = findTypeIdsBySecondId(secondId,keys,values);
+		// 如果是混合查询条件错误 查询什么数据都没有
+		if (ids.size() <= 0) {
+			resultMap.put("totalCount", ids.size());
+			resultMap.put("data", res);
+			resultMap.put("page", page);
+			resultMap.put("size", size);
+			return resultMap;
+		}
+		List<Integer> idsForSearch = new ArrayList<>();
+		PageHelper.startPage(page, size);
+		idsForSearch = findTypeIdsBySecondId(secondId,keys,values);
+		// 两种的所有数据
+		List<ThirdLevelDirectory> list = thirdLevelDirectoryMapper.getAllThirdLevelData(idsForSearch);
+		for (ThirdLevelDirectory thrid : list) {
+			if (thrid.getSecondId() == 1) {
+				thrid.setPdfName("/construction_machinery/industrial_rubber_hose/" + thrid.getPdfName());
+				thrid.setThirdImg("/construction_machinery/hose_img/" + thrid.getThirdImg());
+				thrid.setPdfImg("/construction_machinery/pdf_img/" +thrid.getPdfImg());
+				TypeOne typeOne = typeOneMapper.selectTypeOneById(thrid.getTypeId());
+				thrid.setTypeOne(typeOne);
+			} else if (thrid.getSecondId() == 2) {
+				thrid.setPdfName("/construction_machinery/hydraulic_hose/" + thrid.getPdfName());
+				thrid.setThirdImg("/construction_machinery/hose_img/" + thrid.getThirdImg());
+				thrid.setPdfImg("/construction_machinery/pdf_img/" +thrid.getPdfImg());
+				TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(thrid.getTypeId());
+				thrid.setTypeTwo(typeTwo);
+			} else {
+				thrid.setPdfName("/rail_transit/pdf/" + thrid.getPdfName());
+				thrid.setThirdImg("/rail_transit/img/" + thrid.getThirdImg());
+				thrid.setPdfImg("/rail_transit/pdf_img/" +thrid.getPdfImg());
+			}
+			// 通过用户id获取收藏表中的记录
+			List<Collect> collectList = collectMapper.selectCollectThirdId(1);
+			if (collectList.size() != 0) {
+				for (Collect collect : collectList) {
+					if (collect.getThirdId() == thrid.getId()) {
+						thrid.setIsCollect(1);
+						break;
+					} else {
+						thrid.setIsCollect(0);
+					}
+				}
+			} else {
+				thrid.setIsCollect(0);
+			}
+		}
+		// 过滤最终数据
+		List<ThirdLevelDirectory> result = new ArrayList<>();
+		for (ThirdLevelDirectory one : list) {
+			if (one.getSecondId() == secondId) {
+				result.add(one);
+			}
+		}
+
+		PageInfo<ThirdLevelDirectory> entityPage = new PageInfo<ThirdLevelDirectory>(result);
+		
+		if(ids.size()<=(page-1)*size) {
+			resultMap.put("totalCount", ids.size());
+			resultMap.put("data", res);
+			resultMap.put("page", page);
+			resultMap.put("size", size);
+			return resultMap;
+		}
+		
+		// 组织返回的map
+		resultMap.put("totalCount", ids.size());
+		resultMap.put("data", entityPage.getList());
+		resultMap.put("page", page);
+		resultMap.put("size", size);
+		return resultMap;
+
+	}
+
+	/**
+	 * 初始化三级目录时候显示的数据
+	 * @param secondId
+	 * @return
+	 */
+	private Map<String, Object> getAllProductList(int secondId) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		List<ThirdLevelDirectory> productNameList = thirdLevelDirectoryMapper
+				.getAllThirdLevelDirectoryBySecondId(secondId);
+		//去重以后的数据
+		for (ThirdLevelDirectory thrid : productNameList) {
+			if (thrid.getSecondId() == 1) {
+				thrid.setPdfName("/construction_machinery/industrial_rubber_hose/" + thrid.getPdfName());
+				thrid.setThirdImg("/construction_machinery/hose_img/" + thrid.getThirdImg());
+				thrid.setPdfImg("/construction_machinery/pdf_img/" + thrid.getPdfImg());
+				TypeOne typeOne = typeOneMapper.selectTypeOneById(thrid.getTypeId());
+				thrid.setTypeOne(typeOne);
+				thrid.setProductName(typeOne.getProductName());
+			} else if (thrid.getSecondId() == 2) {
+				thrid.setPdfName("/construction_machinery/hydraulic_hose/" + thrid.getPdfName());
+				thrid.setThirdImg("/construction_machinery/hose_img/" + thrid.getThirdImg());
+				thrid.setPdfImg("/construction_machinery/pdf_img/" + thrid.getPdfImg());
+				TypeTwo typeTwo = typeTwoMapper.selectTypeTwoById(thrid.getTypeId());
+				thrid.setTypeTwo(typeTwo);
+				thrid.setProductName(typeTwo.getProductName());
+			} else {
+				thrid.setPdfName("/rail_transit/pdf/" + thrid.getPdfName());
+				thrid.setThirdImg("/rail_transit/img/" + thrid.getThirdImg());
+				thrid.setPdfImg("/rail_transit/pdf_img/" +thrid.getPdfImg());
+			}
+		}
+		if(secondId==1 || secondId==2) {
+			// 去重以后的数据
+			List<ThirdLevelDirectory> result = removeDupliByProductName(productNameList);
+			resultMap.put("data", result);
+			return resultMap;
+		}else {
+			resultMap.put("data", productNameList);
+			return resultMap;
+		}
+	}
+	
+	/**
+	 * 通过二级id 和 条件 找符合条件的类型表id
+	 * @param secondId
+	 * @param keys
+	 * @param values
+	 * @return
+	 */
+	private List<Integer> findTypeIdsBySecondId(int secondId,List<String> keys, List<String> values){
+		List<Integer> ids = new ArrayList<>();
+		if (secondId == 1) {
+			TypeOne tempOne = getObjectOne(keys, values);
+			List<TypeOne> type = typeOneMapper.getAllType(tempOne);
+			if (type.size() > 0) {
+				for (TypeOne one : type) {
+					ids.add(one.getId());
+				}
+			}
+		} else if (secondId == 2) {
+			TypeTwo tempTwo = getObjectTwo(keys, values);
+			List<TypeTwo> type = typeTwoMapper.getAllTypeTwo(tempTwo);
+			if (type.size() > 0) {
+				for (TypeTwo two : type) {
+					ids.add(two.getId());
+				}
+			}
+		}
+		return ids;
+	}
+	/**
+	 * 去重
+	 * @param list
+	 * @return
+	 */
+	private List<ThirdLevelDirectory> removeDupliByProductName(List<ThirdLevelDirectory> list) {
+		Set<ThirdLevelDirectory> personSet = new TreeSet<ThirdLevelDirectory>(
+				(o1, o2) -> o1.getProductName().compareTo(o2.getProductName()));
+		personSet.addAll(list);
+		return new ArrayList<ThirdLevelDirectory>(personSet);
+	}
+
+	/**
+	 * @Description 通过上级的id 找所有下级
+	 * @param id
+	 * @param list
+	 * @return
+	 */
+	private List<Parameter> getParameter(int id, List<Parameter> list) {
+
+		List<Parameter> newRsultList = new ArrayList<>();
+
+		for (Parameter par : list) {
+			if (id == par.getProductFeaturesId()) {
+				newRsultList.add(par);
+			}
+		}
+		return newRsultList;
+	}
+
+	/**
+	 * 根据前台传来的字符串组织查询对象Typeone
+	 * 
+	 * @param keys
+	 * @param values
+	 * @return
+	 */
+	private TypeOne getObjectOne(List<String> keys, List<String> values) {
+		String[] keyArray = keys.toArray(new String[keys.size()]);
+		String[] valueArray = values.toArray(new String[values.size()]);
+		TypeOne result = new TypeOne();
+		for (int i = 0; i < keyArray.length; i++) {
+			if ("hose_id".equals(keyArray[i])) {
+				result.setHoseId(valueArray[i]);
+			} else if ("hose_od".equals(keyArray[i])) {
+				result.setHoseOd(valueArray[i]);
+			} else if ("wp_psi".equals(keyArray[i])) {
+				result.setWpPsi(valueArray[i]);
+			} else if ("lowest_temperature".equals(keyArray[i])) {
+				result.setLowestTemperature(valueArray[i]);
+			} else if ("highest_temperature".equals(keyArray[i])) {
+				result.setLowestTemperature(valueArray[i]);
+			} else if ("classification".equals(keyArray[i])) {
+				result.setClassification(valueArray[i]);
+			} else if ("medium".equals(keyArray[i])) {
+				result.setMedium(valueArray[i]);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 根据前台传来的字符串组织查询对象TypeTwo
+	 * 
+	 * @param keys
+	 * @param values
+	 * @return
+	 */
+	private TypeTwo getObjectTwo(List<String> keys, List<String> values) {
+		String[] keyArray = keys.toArray(new String[keys.size()]);
+		String[] valueArray = values.toArray(new String[values.size()]);
+		TypeTwo result = new TypeTwo();
+		for (int i = 0; i < keyArray.length; i++) {
+			if ("hose_id".equals(keyArray[i])) {
+				result.setHoseId(valueArray[i]);
+			} else if ("wp_mpa".equals(keyArray[i])) {
+				result.setWpMpa(valueArray[i]);
+			} else if ("spiral_or_braid".equals(keyArray[i])) {
+				result.setSpiralOrBraid(valueArray[i]);
+			} else if ("lowest_temperature".equals(keyArray[i])) {
+				result.setLowestTemperature(valueArray[i]);
+			} else if ("highest_temperature".equals(keyArray[i])) {
+				result.setHighestTemperature(valueArray[i]);
+			}
+		}
+		return result;
+	}
+
+}

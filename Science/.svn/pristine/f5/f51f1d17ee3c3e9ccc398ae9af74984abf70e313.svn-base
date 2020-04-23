@@ -1,0 +1,18 @@
+/**
+ * 
+ */
+package com.fujitsu.ttf.yd.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.fujitsu.ttf.yd.entity.TypeTwo;
+
+/**
+ * @author wuyu
+ *
+ */
+@Mapper
+public interface TypeTwoMapper {
+	public TypeTwo selectTypeTwoById(@Param("id")Integer id);
+}

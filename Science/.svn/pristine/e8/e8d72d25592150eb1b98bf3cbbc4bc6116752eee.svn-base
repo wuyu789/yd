@@ -1,0 +1,29 @@
+package com.fujitsu.ttf.yd.service;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+*@author shik.jy
+*@date 2019年10月21日
+*@Description
+*/
+public interface ProductFeaturesService {
+
+	/**
+	 * 获取所有的产品特性
+	 * @param thridId
+	 * @return
+	 */
+	Map<String,Object> getAllProduct(int thridId);
+	
+	/**
+	 * 获取带分页的产品数据
+	 * @param key
+	 * @param value
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	Map<String,Object> getAllProduct(List<String> key,List<String> value,int page,int size,int secondId);
+}

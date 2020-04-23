@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fujitsu.ttf.yd.mapper.SendRecordMapper">
+     <resultMap id="idmap" type="com.fujitsu.ttf.yd.entity.SendRecord">
+       <result property="id" column="id"/>
+       <result property="sendName" column="send_name"/>
+       <result property="sendTime" column="send_time"/>
+       <result property="sendEmail" column="send_email"/>
+       <result property="userId" column="user_id"/>
+     </resultMap>
+     
+     <insert id="insertSendRecord" parameterType="com.fujitsu.ttf.yd.entity.SendRecord">
+        insert into send_record (send_name,send_time,send_email,user_id) values (#{sendName},#{sendTime},#{sendEmail},#{userId})
+     </insert>
+     
+       <!-- 要查询的所有项 -->
+	<sql id="item">
+		`id`,
+		`send_name`,
+		`send_time`,
+		`send_email`,
+		`user_id`
+	</sql>
+     
+     <!-- 要查询的表-->
+	<sql id="table">
+		`send_record`
+	</sql>
+	
+	<select id="selectSendRecordByUserId" resultMap="idmap" parameterType="string">
+         select <include refid="item"></include>
+         from <include refid="table"/>
+         where user_id=#{openid}
+     </select>
+</mapper>
