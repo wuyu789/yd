@@ -31,7 +31,7 @@ public class CarouselController {
 	private CarouselService carouselService;
 	
 	@GetMapping("getAllCarouselVo")
-	@ApiOperation(value = "查询所有轮播图", notes = "")
+	@ApiOperation(value = "所有轮播图", notes = "")
 	@ResponseBody
 	@ApiImplicitParam(name = "Authorization", value = "Token", required = true, dataType = "String", paramType = "header")
 	public List<Carousel> getAllCarouselVo(){
